@@ -1,0 +1,40 @@
+{
+  "carts": {
+    "title": "Abandoned Carts",
+    "searchPlaceholder": "Search carts...",
+    "sortBy": "Sort by",
+    "sortOptions": {
+      "lastUpdated": "Last Updated",
+      "customerName": "Customer Name",
+      "cartValue": "Cart Value"
+    },
+    "table": {
+      "cartId": "Cart ID",
+      "customerName": "Customer Name",
+      "products": "Products",
+      "totalValue": "Total Value",
+      "lastUpdated": "Last Updated",
+      "status": "Status",
+      "actions": "Actions",
+      "guest": "Guest"
+    },
+    "status": {
+      "active": "Abandoned",
+      "recovered": "Recovered",
+      "expired": "Expired"
+    },
+    "actions": {
+      "title": "Actions",
+      "openMenu": "Open menu",
+      "sendEmail": "Send Reminder Email",
+      "applyDiscount": "Apply Discount Code",
+      "recoverCart": "Recover Cart",
+      "deleteCart": "Delete Cart",
+      "emailSent": "Reminder email sent successfully",
+      "discountApplied": "Discount code applied successfully",
+      "cartRecovered": "Cart recovered successfully",
+      "cartDeleted": "Cart deleted successfully",
+      "error": "An error occurred while performing the action"
+    }
+  }
+}

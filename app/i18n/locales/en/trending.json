@@ -1,0 +1,18 @@
+{
+  "title": "Trending Now",
+  "subtitle": "Discover what's hot and trending in beauty right now",
+  "noProducts": "No trending products available at the moment. Check back soon!",
+  "returnHome": "Return to Home",
+  "error": "Sorry, there was an error loading the products",
+  "featuredTrending": "Trending #1",
+  "shopNow": "Shop Now",
+  "sortBy": {
+    "label": "Sort by",
+    "popularity": "Most Popular",
+    "rating": "Highest Rated",
+    "discount": "Biggest Discount",
+    "priceLow": "Price: Low to High",
+    "priceHigh": "Price: High to Low"
+  },
+  "discount": "OFF"
+}

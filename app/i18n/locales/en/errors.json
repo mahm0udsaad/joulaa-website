@@ -1,0 +1,54 @@
+{
+  "general": {
+    "somethingWentWrong": "Something went wrong",
+    "tryAgainLater": "Please try again later",
+    "pageNotFound": "Page not found",
+    "accessDenied": "Access denied",
+    "sessionExpired": "Session expired",
+    "networkError": "Network error",
+    "timeoutError": "Request timed out",
+    "serverError": "Server error"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Please enter a valid email address",
+    "password": "Password does not meet requirements",
+    "phone": "Please enter a valid phone number",
+    "zipCode": "Please enter a valid ZIP/postal code",
+    "number": "Please enter a valid number",
+    "minLength": "Must be at least {min} characters",
+    "maxLength": "Must be no more than {max} characters",
+    "match": "Fields do not match",
+    "url": "Please enter a valid URL"
+  },
+  "database": {
+    "connectionError": "Database connection error",
+    "queryError": "Error executing database query",
+    "notFound": "Record not found",
+    "alreadyExists": "Record already exists",
+    "updateFailed": "Failed to update record",
+    "deleteFailed": "Failed to delete record",
+    "createFailed": "Failed to create record"
+  },
+  "auth": {
+    "invalidCredentials": "Invalid email or password",
+    "accountLocked": "Account is locked",
+    "tooManyAttempts": "Too many attempts. Please try again later",
+    "emailNotVerified": "Email not verified",
+    "tokenExpired": "Authentication token expired",
+    "unauthorizedAccess": "Unauthorized access"
+  },
+  "payment": {
+    "cardDeclined": "Card was declined",
+    "invalidCard": "Invalid card information",
+    "paymentFailed": "Payment failed",
+    "insufficientFunds": "Insufficient funds",
+    "transactionFailed": "Transaction failed"
+  },
+  "upload": {
+    "fileTooLarge": "File is too large",
+    "invalidFileType": "Invalid file type",
+    "uploadFailed": "File upload failed",
+    "maxFilesExceeded": "Maximum number of files exceeded"
+  }
+}

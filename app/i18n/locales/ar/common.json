@@ -1,0 +1,216 @@
+{
+  "navbar": {
+    "menu": "القائمة",
+    "actions": "الإجراءات",
+    "home": "الرئيسية",
+    "shop": "المتجر",
+    "about": "من نحن",
+    "contact": "اتصل بنا",
+    "cart": "عربة التسوق",
+    "newArrivals": "وصل حديثاً",
+    "trending": "الأكثر رواجاً",
+    "collections": "المجموعات",
+    "search": "بحث",
+    "wishlist": "المفضلة",
+    "userMenu": {
+      "myAccount": "حسابي",
+      "profile": "الملف الشخصي",
+      "orders": "الطلبات",
+      "signOut": "تسجيل الخروج"
+    },
+    "auth": {
+      "signIn": "تسجيل الدخول",
+      "signUp": "إنشاء حساب"
+    }
+  },
+  "home": {
+    "loading": "جاري التحميل...",
+    "sections": {
+      "hero": "العرض الرئيسي",
+      "categoryShowcase": "تسوق حسب الفئة",
+      "trending": "المنتجات الرائجة",
+      "featured": "المنتجات المميزة",
+      "newArrivals": "وصل حديثاً",
+      "bestSellers": "الأكثر مبيعاً",
+      "endOfMonthSale": "تخفيضات نهاية الشهر",
+      "promotions": "العروض الخاصة"
+    }
+  },
+  "account": {
+    "profileInformation": "معلومات الملف الشخصي",
+    "updateAccountInformation": "تحديث معلومات حسابك هنا",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "email": "البريد الإلكتروني",
+    "emailCannotBeChanged": "لا يمكن تغيير بريدك الإلكتروني",
+    "phone": "الهاتف",
+    "address": "العنوان",
+    "city": "المدينة",
+    "state": "الولاية",
+    "zipCode": "الرمز البريدي",
+    "saveChanges": "حفظ التغييرات",
+    "orderHistory": "سجل الطلبات",
+    "viewAndTrackOrders": "عرض وتتبع طلباتك السابقة",
+    "noOrdersYet": "لا توجد طلبات بعد",
+    "startShopping": "ابدأ التسوق",
+    "browseProducts": "تصفح المنتجات",
+    "order": "طلب",
+    "placedOn": "تم الطلب في",
+    "orderItems": "العناصر",
+    "subtotal": "المجموع الفرعي",
+    "shipping": "الشحن",
+    "tax": "الضريبة",
+    "discount": "الخصم",
+    "total": "المجموع",
+    "paymentInformation": "معلومات الدفع",
+    "paymentStatus": "حالة الدفع",
+    "needHelp": "تحتاج مساعدة؟",
+    "backToAccount": "العودة إلى الحساب",
+    "backToOrders": "العودة إلى الطلبات",
+    "loadingOrderDetails": "جاري تحميل تفاصيل الطلب...",
+    "loadingYourOrders": "جاري تحميل طلباتك...",
+    "completeYourProfile": "أكمل ملفك الشخصي لرؤية معلومات الاتصال الخاصة بك هنا",
+    "yourWishlistIsEmpty": "قائمة أمنياتك فارغة.",
+    "productsYouSavedForLater": "المنتجات التي قمت بحفظها لوقت لاحق"
+  },
+  "admin": {
+    "dashboard": {
+      "title": "لوحة التحكم",
+      "totalOrders": "إجمالي الطلبات",
+      "totalCustomers": "إجمالي العملاء",
+      "totalRevenue": "إجمالي الإيرادات",
+      "abandonedCarts": "العربات المتروكة",
+      "recentOrders": "أحدث الطلبات",
+      "recentCustomers": "أحدث العملاء",
+      "viewAllOrders": "عرض جميع الطلبات",
+      "viewAllCustomers": "عرض جميع العملاء"
+    },
+    "categories": {
+      "title": "الفئات",
+      "add": "إضافة فئة",
+      "manage": "إدارة الفئات",
+      "search": "البحث عن الفئات...",
+      "noResults": "لم يتم العثور على فئات",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "updateDetails": "تحديث تفاصيل هذه الفئة.",
+      "createNew": "إنشاء فئة جديدة لمنتجاتك.",
+      "form": {
+        "name": "اسم",
+        "slug": "عنوان URL",
+        "imageURL": "عنوان URL للصورة",
+        "productCount": "عدد المنتجات",
+        "description": "وصف",
+        "show": "إظهار هذه الفئة"
+      }
+    },
+    "products": {
+      "title": "المنتجات",
+      "manage": "إدارة المنتجات",
+      "add": "إضافة منتج جديد",
+      "noResults": "لم يتم العثور على منتجات",
+      "noMatches": "لا توجد منتجات تطابق بحثك.",
+      "form": {
+        "name": "اسم المنتج",
+        "brand": "العلامة التجارية",
+        "category": "الفئة",
+        "price": "السعر",
+        "stock": "المخزون",
+        "description": "وصف المنتج",
+        "images": "صور المنتج"
+      }
+    }
+  },
+  "common": {
+    "actions": {
+      "edit": "تعديل",
+      "delete": "حذف",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "close": "إغلاق"
+    },
+    "status": {
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "new": "جديد",
+      "processing": "قيد المعالجة",
+      "shipped": "تم الشحن",
+      "delivered": "تم التسليم",
+      "cancelled": "ملغي"
+    }
+  },
+  "categories": "الفئات",
+  "categoryTypes": {
+    "lips": "شفاه",
+    "face": "وجه",
+    "eyes": "عيون"
+  },
+  "navigation": {
+    "newArrivals": "وصل حديثاً",
+    "bestSellers": "الأكثر مبيعاً"
+  },
+  "product": {
+    "addedToCart": "تمت الإضافة إلى السلة",
+    "addedToCartDesc": "تمت إضافة {{count}} عنصر(عناصر) إلى سلة التسوق الخاصة بك.",
+    "removedFromWishlist": "تمت الإزالة من المفضلة",
+    "removedFromWishlistDesc": "{{name}} تمت إزالته من المفضلة.",
+    "addedToWishlist": "تمت الإضافة إلى المفضلة",
+    "addedToWishlistDesc": "{{name}} تمت إضافته إلى المفضلة.",
+    "off": "خصم",
+    "reviews": "تقييم",
+    "addToCart": "أضف إلى السلة",
+    "removeFromWishlist": "إزالة من المفضلة",
+    "addToWishlist": "أضف إلى المفضلة",
+    "share": "مشاركة",
+    "freeShipping": "شحن مجاني للطلبات فوق 50 دولار",
+    "stockStatus": {
+      "inStock": "متوفر",
+      "outOfStock": "غير متوفر"
+    },
+    "description": "الوصف",
+    "details": "التفاصيل",
+    "reviewsTab": "التقييمات",
+    "dermatologicallyTested": "تم اختباره من قبل أطباء الجلدية",
+    "suitableForAllSkinTypes": "مناسب لجميع أنواع البشرة",
+    "crueltyFreeVegan": "خالي من القسوة ونباتي",
+    "freeFromParabensSulfates": "خالي من البارابين والكبريتات",
+    "productDetails": "تفاصيل المنتج",
+    "brand": "العلامة التجارية:",
+    "weight": "الوزن:",
+    "dimensions": "الأبعاد:",
+    "sku": "رمز المنتج:",
+    "na": "غير متوفر",
+    "ingredients": "المكونات",
+    "ingredientsNotAvailable": "معلومات المكونات غير متوفرة.",
+    "customerReviews": "تقييمات العملاء",
+    "writeAReview": "اكتب تقييم",
+    "sampleReview1": "هذا المنتج رائع! استخدمته لمدة أسبوعين ولاحظت النتائج بالفعل. الملمس ناعم ويمتص بسرعة دون ترك أي بقايا دهنية.",
+    "sampleReview2": "منتج جيد بشكل عام. الرائحة قوية قليلاً بالنسبة لي، لكن النتائج رائعة. أنصح به لمن يبحث عن نتائج سريعة.",
+    "noReviewsYet": "لا توجد تقييمات بعد. كن أول من يقيّم هذا المنتج!",
+    "similarProducts": "منتجات مشابهة",
+    "notFoundTitle": "المنتج غير موجود",
+    "notFoundDesc": "لم يتم العثور على هذا المنتج.",
+    "anonymous": "مجهول",
+    "reviewAdded": "تم إرسال التقييم",
+    "reviewAddedDesc": "شكرًا لملاحظاتك!",
+    "rateStar": "قيّم {n} نجمة",
+    "writeReviewPlaceholder": "اكتب تقييمك هنا...",
+    "submitReview": "إرسال التقييم"
+  },
+  "footer": {
+    "brandName": "جولا",
+    "tagline": "وجهتك الشاملة لجميع احتياجات الجمال",
+    "shop": "تسوق",
+    "help": "مساعدة",
+    "contactUs": "اتصل بنا",
+    "shippingReturns": "الشحن والإرجاع",
+    "faq": "الأسئلة الشائعة",
+    "privacyPolicy": "سياسة الخصوصية",
+    "termsConditions": "الشروط والأحكام",
+    "subscribe": "اشترك",
+    "subscribeText": "اشترك في نشرتنا الإخبارية للحصول على التحديثات والعروض الحصرية",
+    "emailPlaceholder": "أدخل بريدك الإلكتروني",
+    "subscribeButton": "اشترك",
+    "allRightsReserved": "جميع الحقوق محفوظة"
+  }
+}

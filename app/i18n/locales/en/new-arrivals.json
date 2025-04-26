@@ -1,0 +1,15 @@
+{
+  "title": "New Arrivals",
+  "description": "English translation of description",
+  "noProducts": "No new products available at the moment.",
+  "returnHome": "Return to Home",
+  "error": "An error occurred while fetching products.",
+  "heroTitle": {
+    "line1": "Discover Our Latest",
+    "line2": "Beauty Arrivals"
+  },
+  "heroDescription": "Explore our newest collection of premium beauty products, carefully selected to enhance your natural beauty.",
+  "exploreCollection": "Explore the Collection",
+  "latestAdditions": "Latest Additions",
+  "latestAdditionsDescription": "Browse our most recent beauty products and stay ahead of the trends"
+}

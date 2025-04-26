@@ -1,0 +1,11 @@
+{
+  "yourCart": "Your Cart",
+  "emptyCart": "Your cart is empty",
+  "emptyCartMessage": "Looks like you haven't added anything to your cart yet",
+  "continueShopping": "Continue Shopping",
+  "subtotal": "Subtotal",
+  "shipping": "Shipping",
+  "calculatedAtCheckout": "Calculated at checkout",
+  "total": "Total",
+  "proceedToCheckout": "Proceed to Checkout"
+}

@@ -1,0 +1,70 @@
+{
+  "title": "Secure Checkout",
+  "continueShopping": "Continue Shopping",
+  "shipping": {
+    "title": "Shipping Information",
+    "change": "Change",
+    "save": "Save",
+    "cancel": "Cancel",
+    "saveAddress": "Save this address for future orders",
+    "fields": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "address": "Street Address",
+      "city": "City",
+      "postalCode": "Postal Code",
+      "state": "State/Province",
+      "country": "Country",
+      "phone": "Phone Number"
+    },
+    "placeholders": {
+      "firstName": "Enter your first name",
+      "lastName": "Enter your last name",
+      "email": "Enter your email",
+      "address": "Enter your street address",
+      "city": "Enter your city",
+      "postalCode": "Enter your postal code",
+      "state": "Enter your state",
+      "country": "Enter your country",
+      "phone": "Enter your phone number"
+    },
+    "success": {
+      "title": "Success",
+      "description": "Shipping address saved successfully"
+    },
+    "error": {
+      "title": "Error",
+      "description": "Failed to save shipping address"
+    }
+  },
+  "payment": {
+    "title": "Payment Information",
+    "selectMethod": "Select Payment Method",
+    "methods": {
+      "card": {
+        "title": "Credit/Debit Card",
+        "description": "Pay securely online"
+      },
+      "cash": {
+        "title": "Cash on Delivery",
+        "description": "Pay when you receive"
+      }
+    },
+    "loading": "Loading payment information...",
+    "error": {
+      "title": "Error",
+      "description": "Failed to initialize payment. Please try again."
+    },
+    "shippingRequired": "Please complete all shipping information fields before proceeding to payment."
+  },
+  "orderSummary": {
+    "title": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "free": "Free",
+    "total": "Total",
+    "delivery": "Estimated delivery: 3-5 business days",
+    "quantity": "Qty"
+  }
+}

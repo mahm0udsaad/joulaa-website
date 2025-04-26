@@ -1,0 +1,11 @@
+{
+  "yourCart": "عربة التسوق الخاصة بك",
+  "emptyCart": "عربة التسوق فارغة",
+  "emptyCartMessage": "يبدو أنك لم تضف أي منتجات إلى عربة التسوق الخاصة بك حتى الآن.",
+  "continueShopping": "متابعة التسوق",
+  "subtotal": "المجموع الفرعي",
+  "shipping": "الشحن",
+  "calculatedAtCheckout": "يتم حسابه عند الدفع",
+  "total": "المجموع",
+  "proceedToCheckout": "المتابعة إلى الدفع"
+}

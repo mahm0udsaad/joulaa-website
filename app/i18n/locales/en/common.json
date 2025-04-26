@@ -1,0 +1,216 @@
+{
+  "navbar": {
+    "menu": "Menu",
+    "actions": "Actions",
+    "home": "Home",
+    "shop": "Shop",
+    "about": "About Us",
+    "contact": "Contact Us",
+    "cart": "Shopping Cart",
+    "newArrivals": "New Arrivals",
+    "trending": "Trending",
+    "collections": "Collections",
+    "search": "Search",
+    "wishlist": "Wishlist",
+    "userMenu": {
+      "myAccount": "My Account",
+      "profile": "Profile",
+      "orders": "Orders",
+      "signOut": "Sign out"
+    },
+    "auth": {
+      "signIn": "Sign In",
+      "signUp": "Sign Up"
+    }
+  },
+  "home": {
+    "loading": "Loading...",
+    "sections": {
+      "hero": "Hero Slider",
+      "categoryShowcase": "Shop by Category",
+      "trending": "Trending Products",
+      "featured": "Featured Products",
+      "newArrivals": "New Arrivals",
+      "bestSellers": "Best Sellers",
+      "endOfMonthSale": "End of Month Sale",
+      "promotions": "Special Promotions"
+    }
+  },
+  "account": {
+    "profileInformation": "Profile Information",
+    "updateAccountInformation": "Update your account information",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "emailCannotBeChanged": "Email address cannot be changed",
+    "phone": "Phone Number",
+    "address": "Address",
+    "city": "City",
+    "state": "State/Province",
+    "zipCode": "ZIP/Postal Code",
+    "saveChanges": "Save Changes",
+    "orderHistory": "Order History",
+    "viewAndTrackOrders": "View and track your orders",
+    "noOrdersYet": "No orders yet",
+    "startShopping": "Start Shopping",
+    "browseProducts": "Browse Products",
+    "order": "Order",
+    "placedOn": "Placed on",
+    "orderItems": "Order Items",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "tax": "Tax",
+    "discount": "Discount",
+    "total": "Total",
+    "paymentInformation": "Payment Information",
+    "paymentStatus": "Payment Status",
+    "needHelp": "Need Help?",
+    "backToAccount": "Back to Account",
+    "backToOrders": "Back to Orders",
+    "loadingOrderDetails": "Loading order details...",
+    "loadingYourOrders": "Loading your orders...",
+    "completeYourProfile": "Complete your profile",
+    "yourWishlistIsEmpty": "Your wishlist is empty",
+    "productsYouSavedForLater": "Products you saved for later"
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Dashboard",
+      "totalOrders": "Total Orders",
+      "totalCustomers": "Total Customers",
+      "totalRevenue": "Total Revenue",
+      "abandonedCarts": "Abandoned Carts",
+      "recentOrders": "Recent Orders",
+      "recentCustomers": "Recent Customers",
+      "viewAllOrders": "View All Orders",
+      "viewAllCustomers": "View All Customers"
+    },
+    "categories": {
+      "title": "Categories",
+      "add": "Add Category",
+      "manage": "Manage Categories",
+      "search": "Search Categories",
+      "noResults": "No Categories Found",
+      "edit": "Edit",
+      "delete": "Delete",
+      "updateDetails": "Update the details of this category",
+      "createNew": "Create a new category for your products",
+      "form": {
+        "name": "Name",
+        "slug": "Slug",
+        "imageURL": "Image URL",
+        "productCount": "Product Count",
+        "description": "Description",
+        "show": "Show this category"
+      }
+    },
+    "products": {
+      "title": "Products",
+      "manage": "Manage Products",
+      "add": "Add New Product",
+      "noResults": "No Products Found",
+      "noMatches": "No products match your search",
+      "form": {
+        "name": "Product Name",
+        "brand": "Brand",
+        "category": "Category",
+        "price": "Price",
+        "stock": "Stock",
+        "description": "Product Description",
+        "images": "Product Images"
+      }
+    }
+  },
+  "common": {
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "save": "Save",
+      "cancel": "Cancel",
+      "close": "Close"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "new": "New",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    }
+  },
+  "categories": "Categories",
+  "categoryTypes": {
+    "lips": "Lips",
+    "face": "Face",
+    "eyes": "Eyes"
+  },
+  "navigation": {
+    "newArrivals": "New Arrivals",
+    "bestSellers": "Best Sellers"
+  },
+  "product": {
+    "addedToCart": "Added to cart",
+    "addedToCartDesc": "{{count}} item(s) added to your cart.",
+    "removedFromWishlist": "Removed from wishlist",
+    "removedFromWishlistDesc": "{{name}} has been removed from your wishlist.",
+    "addedToWishlist": "Added to wishlist",
+    "addedToWishlistDesc": "{{name}} has been added to your wishlist.",
+    "off": "OFF",
+    "reviews": "reviews",
+    "addToCart": "Add to Cart",
+    "removeFromWishlist": "Remove from Wishlist",
+    "addToWishlist": "Add to Wishlist",
+    "share": "Share",
+    "freeShipping": "Free shipping on orders over $50",
+    "stockStatus": {
+      "inStock": "In Stock",
+      "outOfStock": "Out of Stock"
+    },
+    "description": "Description",
+    "details": "Details",
+    "reviewsTab": "Reviews",
+    "dermatologicallyTested": "Dermatologically tested",
+    "suitableForAllSkinTypes": "Suitable for all skin types",
+    "crueltyFreeVegan": "Cruelty-free and vegan",
+    "freeFromParabensSulfates": "Free from parabens and sulfates",
+    "productDetails": "Product Details",
+    "brand": "Brand:",
+    "weight": "Weight:",
+    "dimensions": "Dimensions:",
+    "sku": "SKU:",
+    "na": "N/A",
+    "ingredients": "Ingredients",
+    "ingredientsNotAvailable": "Ingredients information not available.",
+    "customerReviews": "Customer Reviews",
+    "writeAReview": "Write a Review",
+    "sampleReview1": "This product is amazing! I've been using it for two weeks and already see results. The texture is smooth and it absorbs quickly without leaving any greasy residue.",
+    "sampleReview2": "Good product overall. The scent is a bit strong for my liking, but the results are great. Would recommend for those looking for quick results.",
+    "noReviewsYet": "No reviews yet. Be the first to review this product!",
+    "similarProducts": "You May Also Like",
+    "notFoundTitle": "Product Not Found",
+    "notFoundDesc": "This product could not be found.",
+    "anonymous": "Anonymous",
+    "reviewAdded": "Review submitted",
+    "reviewAddedDesc": "Thank you for your feedback!",
+    "rateStar": "Rate {{n}} star{{n > 1 ? 's' : ''}}",
+    "writeReviewPlaceholder": "Write your review here...",
+    "submitReview": "Submit Review"
+  },
+  "footer": {
+    "brandName": "Joulaa",
+    "tagline": "Your one-stop destination for all beauty needs",
+    "shop": "Shop",
+    "help": "Help",
+    "contactUs": "Contact Us",
+    "shippingReturns": "Shipping & Returns",
+    "faq": "FAQ",
+    "privacyPolicy": "Privacy Policy",
+    "termsConditions": "Terms & Conditions",
+    "subscribe": "Subscribe",
+    "subscribeText": "Subscribe to our newsletter for updates and exclusive offers",
+    "emailPlaceholder": "Enter your email",
+    "subscribeButton": "Subscribe",
+    "allRightsReserved": "All Rights Reserved"
+  }
+}
