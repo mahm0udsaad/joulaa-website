@@ -25,8 +25,13 @@ export function middleware(request) {
   if (!pathnameHasLocale) {
     let locale = fallbackLng;
 
-    // Try to get language from Accept-Language header
-    if (request.headers.has("Accept-Language")) {
+    // First try to get language from cookie
+    const cookieLang = request.cookies.get("preferred_language")?.value;
+    if (cookieLang && languages.includes(cookieLang)) {
+      locale = cookieLang;
+    }
+    // If no cookie, try Accept-Language header
+    else if (request.headers.has("Accept-Language")) {
       const acceptLanguage = request.headers.get("Accept-Language");
       locale =
         languages.find((lang) => acceptLanguage.startsWith(lang)) ||
@@ -36,9 +41,9 @@ export function middleware(request) {
     // Create the new URL with locale prefix
     const newUrl = new URL(
       `/${locale}${pathname.startsWith("/") ? "" : "/"}${pathname}`,
-      request.url
+      request.url,
     );
-    
+
     // Preserve all search parameters from the original request
     searchParams.forEach((value, key) => {
       newUrl.searchParams.set(key, value);

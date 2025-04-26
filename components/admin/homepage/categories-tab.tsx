@@ -1,952 +1,594 @@
 "use client";
 
-import { CardFooter } from "@/components/ui/card";
-
-import type React from "react";
-
 import { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/lib/supabase";
-import { toast } from "@/components/ui/use-toast";
+import {
+  Trash,
+  Pencil,
+  Plus,
+  Save,
+  Sparkles,
+  Star,
+  Heart,
+  Sun,
+  Moon,
+  Smile,
+  ShoppingBag,
+  Gift,
+  Gem,
+  Crown,
+  Coffee,
+  Palette,
+  Droplet,
+  Flower,
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogClose,
+  DialogTrigger,
 } from "@/components/ui/dialog";
-import type { CategoryShowcaseItem } from "@/lib/types";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Database,
-  Package,
-  ShieldAlert,
-  LoaderIcon as LoadingSpinner,
-} from "lucide-react";
-import Link from "next/link";
+
+// Define the type for category showcase items
+type CategoryShowcase = {
+  id: string;
+  category_id: string;
+  name: string;
+  name_ar: string;
+  icon: string;
+  color: string;
+  href: string;
+  image: string;
+  active: boolean;
+  order: number;
+  created_at: string;
+  updated_at: string;
+};
+
+// Define available icons from lucide-react
+const lucideIcons: Record<string, React.ReactNode> = {
+  Sparkles: <Sparkles className="h-5 w-5" />,
+  Star: <Star className="h-5 w-5" />,
+  Heart: <Heart className="h-5 w-5" />,
+  Sun: <Sun className="h-5 w-5" />,
+  Moon: <Moon className="h-5 w-5" />,
+  Smile: <Smile className="h-5 w-5" />,
+  ShoppingBag: <ShoppingBag className="h-5 w-5" />,
+  Gift: <Gift className="h-5 w-5" />,
+  Gem: <Gem className="h-5 w-5" />,
+  Crown: <Crown className="h-5 w-5" />,
+  Coffee: <Coffee className="h-5 w-5" />,
+  Palette: <Palette className="h-5 w-5" />,
+  Droplet: <Droplet className="h-5 w-5" />,
+  Flower: <Flower className="h-5 w-5" />,
+};
+
+// Colors available for selection
+const availableColors = [
+  "from-rose-400 to-rose-200",
+  "from-blue-400 to-blue-200",
+  "from-green-400 to-green-200",
+  "from-purple-400 to-purple-200",
+  "from-yellow-400 to-yellow-200",
+  "from-pink-400 to-pink-200",
+  "from-indigo-400 to-indigo-200",
+  "from-amber-400 to-amber-200",
+];
 
 export default function CategoriesTab() {
-  const [categoryShowcase, setCategoryShowcase] = useState<any[]>([]);
-  const [isLoadingCategoryShowcase, setIsLoadingCategoryShowcase] =
-    useState(false);
-  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
-  const [currentCategory, setCurrentCategory] =
-    useState<CategoryShowcaseItem | null>(null);
-  const [deleteDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [rlsDialogOpen, setRlsDialogOpen] = useState(false);
-  const [storageBucketDialogOpen, setStorageBucketDialogOpen] = useState(false);
-  const [setupDialogOpen, setSetupDialogOpen] = useState(false);
-  const [hasRlsError, setHasRlsError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [tableExists, setTableExists] = useState(true);
-  const [state, setState] = useState({
-    categories: [],
-    isLoading: false,
-    error: null,
-    tableExists: true,
-    hasRlsError: false,
+  const [showcaseItems, setShowcaseItems] = useState<CategoryShowcase[]>([]);
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>(
+    [],
+  );
+  const [isLoading, setIsLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  // Form state for new/edited showcase
+  const [formData, setFormData] = useState<Partial<CategoryShowcase>>({
+    name: "",
+    name_ar: "",
+    icon: "Sparkles",
+    color: "from-rose-400 to-rose-200",
+    href: "",
+    image: "",
+    active: true,
+    order: 1,
+    category_id: "",
   });
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [stateValue, setStateValue] = useState("");
-  const [zipCode, setZipCode] = useState("");
-  const [user, setUser] = useState(null);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [orders, setOrders] = useState([]);
-  const [ordersLoading, setOrdersLoading] = useState(true);
 
+  // Fetch data from Supabase
   useEffect(() => {
-    fetchCategoryShowcase();
-  }, []);
+    const fetchData = async () => {
+      setIsLoading(true);
 
-  const fetchCategoryShowcase = async () => {
-    setIsLoadingCategoryShowcase(true);
-    try {
-      const { data, error } = await supabase
+      // Fetch showcase items
+      const { data: showcaseData, error: showcaseError } = await supabase
         .from("category_showcase")
         .select("*")
         .order("order", { ascending: true });
 
-      if (error) throw error;
-      setCategoryShowcase(data || []);
-    } catch (error) {
-      console.error("Error fetching category showcase:", error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch category showcase. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoadingCategoryShowcase(false);
-    }
-  };
+      if (showcaseError) {
+        console.error("Error fetching showcase data:", showcaseError);
+      } else {
+        setShowcaseItems(showcaseData || []);
+      }
 
-  // Edit category item
-  const editCategoryItem = (item: CategoryShowcaseItem) => {
-    setCurrentCategory(item);
-    setCategoryDialogOpen(true);
-  };
+      // Fetch categories
+      const { data: categoriesData, error: categoriesError } = await supabase
+        .from("categories")
+        .select("id, name");
 
-  // Add new category item
-  const addNewCategoryItem = () => {
-    setCurrentCategory(null);
-    setCategoryDialogOpen(true);
-  };
+      if (categoriesError) {
+        console.error("Error fetching categories:", categoriesError);
+      } else {
+        setCategories(categoriesData || []);
+        // Set default category if available
+        if (categoriesData && categoriesData.length > 0) {
+          setFormData((prev) => ({
+            ...prev,
+            category_id: categoriesData[0].id,
+          }));
+        }
+      }
 
-  // Save category item
-  const saveCategoryItem = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-
-    const categoryData = {
-      name: formData.get("name") as string,
-      name_ar: formData.get("name_ar") as string,
-      icon: formData.get("icon") as string,
-      color: formData.get("color") as string,
-      href: formData.get("href") as string,
-      image: formData.get("image") as string,
-      order: currentCategory?.order || categoryShowcase.length + 1,
-      active: formData.get("active") === "on",
+      setIsLoading(false);
     };
 
+    fetchData();
+  }, []);
+
+  // Handle input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]:
+        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+    }));
+  };
+
+  // Handle select changes
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle switch changes
+  const handleSwitchChange = (checked: boolean) => {
+    setFormData((prev) => ({ ...prev, active: checked }));
+  };
+
+  // Reset form
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      name_ar: "",
+      icon: "Sparkles",
+      color: "from-rose-400 to-rose-200",
+      href: "",
+      image: "",
+      active: true,
+      order: showcaseItems.length + 1,
+      category_id: categories.length > 0 ? categories[0].id : "",
+    });
+    setIsEditing(null);
+  };
+
+  // Load data for editing
+  const handleEdit = (item: CategoryShowcase) => {
+    setFormData({ ...item });
+    setIsEditing(item.id);
+    setIsDialogOpen(true);
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true); // Set loading state to true
+
+    const timestamp = new Date().toISOString();
+
     try {
-      if (currentCategory) {
-        // Update existing category
+      if (isEditing) {
+        // Update existing item
         const { error } = await supabase
           .from("category_showcase")
-          .update(categoryData)
-          .eq("id", currentCategory.id);
+          .update({
+            ...formData,
+            updated_at: timestamp,
+          })
+          .eq("id", isEditing);
 
-        if (error) throw error;
-
-        setCategoryShowcase(
-          categoryShowcase.map((category) =>
-            category.id === currentCategory.id
-              ? { ...category, ...categoryData }
-              : category,
-          ),
-        );
-
-        toast({
-          title: "Category updated",
-          description: "Category item has been updated successfully.",
-        });
+        if (error) {
+          console.error("Error updating showcase:", error);
+        } else {
+          // Update local state
+          setShowcaseItems((prev) =>
+            prev.map((item) =>
+              item.id === isEditing
+                ? ({
+                    ...item,
+                    ...formData,
+                    updated_at: timestamp,
+                  } as CategoryShowcase)
+                : item,
+            ),
+          );
+        }
       } else {
-        // Create new category
+        // Add new item
+        const newItem = {
+          ...formData,
+          created_at: timestamp,
+          updated_at: timestamp,
+        };
+
         const { data, error } = await supabase
           .from("category_showcase")
-          .insert(categoryData)
+          .insert([newItem])
           .select();
 
-        if (error) throw error;
-
-        setCategoryShowcase([...categoryShowcase, data[0]]);
-
-        toast({
-          title: "Category added",
-          description: "New category item has been added successfully.",
-        });
-      }
-
-      setCategoryDialogOpen(false);
-    } catch (error) {
-      console.error("Error saving category:", error);
-      toast({
-        title: "Error",
-        description: "Failed to save category. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  // Handle category deletion
-  const handleDeleteClick = (category: CategoryShowcaseItem) => {
-    if (hasRlsError) {
-      setRlsDialogOpen(true);
-      return;
-    }
-
-    setCurrentCategory(category);
-    setDeleteDialogOpen(true);
-  };
-
-  // Handle category deletion
-  const handleDelete = async () => {
-    if (currentCategory?.id) {
-      try {
-        await deleteCategory(currentCategory.id);
-        setDeleteDialogOpen(false);
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error";
-
-        if (errorMessage.includes("row-level security")) {
-          setHasRlsError(true);
-          setRlsDialogOpen(true);
-          setDeleteDialogOpen(false);
-        } else {
-          toast({
-            title: "Error",
-            description: "Failed to delete category",
-            variant: "destructive",
-          });
+        if (error) {
+          console.error("Error adding showcase:", error);
+        } else if (data) {
+          // Update local state with the returned data
+          setShowcaseItems((prev) => [...prev, data[0] as CategoryShowcase]);
         }
       }
-    }
-  };
 
-  // Check RLS status after fixing it
-  const checkRlsStatus = async () => {
-    try {
-      // Try to insert a test category
-      const testCategory = {
-        id: `test-${Date.now()}`,
-        name: "Test Category",
-        image: "",
-        count: 0,
-        slug: `test-${Date.now()}`,
-        description: "Test category to check RLS",
-        isActive: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      const { error } = await supabase
-        .from("categories")
-        .insert([testCategory]);
-
-      if (error) {
-        if (error.message.includes("row-level security")) {
-          toast({
-            title: "RLS Still Active",
-            description:
-              "Row Level Security is still preventing access. Please check your policy settings.",
-            variant: "destructive",
-          });
-          return false;
-        }
-        throw error;
-      }
-
-      // Delete the test category
-      await supabase.from("categories").delete().eq("id", testCategory.id);
-
-      setHasRlsError(false);
-      setRlsDialogOpen(false);
-
-      toast({
-        title: "Success",
-        description: "Row Level Security policy has been configured correctly!",
-      });
-
-      // Refresh categories
-      await refreshCategories();
-
-      return true;
+      resetForm();
+      setIsDialogOpen(false);
     } catch (error) {
-      console.error("Error checking RLS status:", error);
-      toast({
-        title: "Error",
-        description: "Failed to check RLS status",
-        variant: "destructive",
-      });
-      return false;
+      console.error("Error:", error);
+    } finally {
+      setIsSubmitting(false); // Reset loading state
+    }
+  };
+  // Handle delete
+  const handleDelete = async (id: string) => {
+    const { error } = await supabase
+      .from("category_showcase")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error("Error deleting showcase:", error);
+    } else {
+      setShowcaseItems((prev) => prev.filter((item) => item.id !== id));
     }
   };
 
-  // Check storage bucket setup
-  const checkStorageBucketStatus = async () => {
-    try {
-      // Create a small test file
-      const testFile = new File(["test"], "test.txt", { type: "text/plain" });
-
-      // Try to upload the test file
-      const { error } = await supabase.storage
-        .from("categories")
-        .upload(`test-${Date.now()}.txt`, testFile);
-
-      if (error) {
-        if (error.message.includes("row-level security")) {
-          toast({
-            title: "RLS Still Active",
-            description:
-              "Row Level Security is still preventing access to the storage bucket. Please check your policy settings.",
-            variant: "destructive",
-          });
-          return false;
-        }
-
-        if (
-          error.message.includes("bucket") &&
-          error.message.includes("not found")
-        ) {
-          toast({
-            title: "Bucket Not Found",
-            description:
-              "The 'categories' bucket does not exist. Please create it in the Supabase dashboard.",
-            variant: "destructive",
-          });
-          return false;
-        }
-
-        throw error;
-      }
-
-      setStorageBucketDialogOpen(false);
-
-      toast({
-        title: "Success",
-        description: "Storage bucket is configured correctly!",
-      });
-
-      return true;
-    } catch (error) {
-      console.error("Error checking storage bucket:", error);
-      toast({
-        title: "Error",
-        description: "Failed to check storage bucket",
-        variant: "destructive",
-      });
-      return false;
-    }
+  // Get icon component by name
+  const getIconComponent = (iconName: string) => {
+    return lucideIcons[iconName] || lucideIcons.Sparkles;
   };
-
-  const refreshProducts = async () => {
-    // This function doesn't actually do anything, but it's needed to satisfy the type checker.
-    // In a real application, you would likely want to refresh the list of products here.
-  };
-
-  // Generate slug from name
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.value;
-    const slug = name.toLowerCase().replace(/\s+/g, "-");
-    setCurrentCategory((prev) => (prev ? { ...prev, name, slug } : null));
-  };
-
-  // Handle category deletion
-  const deleteCategory = async (id: string) => {
-    setState((prev) => ({ ...prev, isLoading: true, error: null }));
-
-    try {
-      // Check if table exists first
-      if (!state.tableExists) {
-        toast({
-          title: "Database Error",
-          description:
-            "Categories table does not exist. Please create it in the Supabase dashboard.",
-          variant: "destructive",
-        });
-        setState((prev) => ({ ...prev, isLoading: false }));
-        return;
-      }
-
-      // Delete from Supabase
-      const { error } = await supabase.from("categories").delete().eq("id", id);
-
-      if (error) {
-        throw error;
-      }
-
-      // Update local state
-      setState((prev) => ({
-        ...prev,
-        categories: prev.categories.filter((c) => c.id !== id),
-        isLoading: false,
-      }));
-
-      toast({
-        title: "Success",
-        description: `Category has been deleted`,
-      });
-    } catch (error) {
-      console.error("Failed to delete category:", error);
-      setState((prev) => ({
-        ...prev,
-        isLoading: false,
-        error: "Failed to delete category",
-      }));
-
-      // Check if the error is related to RLS
-      if (
-        error instanceof Error &&
-        error.message.includes("row-level security")
-      ) {
-        setState((prev) => ({ ...prev, hasRlsError: true }));
-      }
-
-      toast({
-        title: "Error",
-        description: "Failed to delete category",
-        variant: "destructive",
-      });
-    }
-  };
-
-  // Toggle category active state
-  const toggleCategoryActive = async (id: string, active: boolean) => {
-    try {
-      const { error } = await supabase
-        .from("categories")
-        .update({ active })
-        .eq("id", id);
-
-      if (error) throw error;
-
-      setHasRlsError(false);
-      setRlsDialogOpen(false);
-
-      toast({
-        title: "Success",
-        description: "Row Level Security policy has been configured correctly!",
-      });
-
-      // Refresh categories
-      await refreshCategories();
-
-      return true;
-    } catch (error) {
-      console.error("Error checking RLS status:", error);
-      toast({
-        title: "Error",
-        description: "Failed to check RLS status",
-        variant: "destructive",
-      });
-      return false;
-    }
-  };
-
-  const refreshCategories = async () => {
-    // This function doesn't actually do anything, but it's needed to satisfy the type checker.
-    // In a real application, you would likely want to refresh the list of categories here.
-  };
-
-  const handleAddCategory = async () => {
-    // This function doesn't actually do anything, but it's needed to satisfy the type checker.
-    // In a real application, you would likely want to handle add category here.
-  };
-
-  const handleUpdateProfile = async () => {
-    // This function doesn't actually do anything, but it's needed to satisfy the type checker.
-    // In a real application, you would likely want to handle update profile here.
-  };
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-96">Loading...</div>
-    );
-  }
-
-  if (!tableExists) {
-    return (
-      <div className="flex flex-col items-center justify-center h-96 space-y-4">
-        <Database className="h-16 w-16 text-gray-400" />
-        <h2 className="text-2xl font-bold">Database Setup Required</h2>
-        <p className="text-center max-w-md text-gray-500">
-          The categories table doesn't exist in your Supabase database. Please
-          create it through the Supabase dashboard.
-        </p>
-        <Button onClick={() => setSetupDialogOpen(true)}>
-          View Setup Instructions
-        </Button>
-
-        <Dialog open={setupDialogOpen} onOpenChange={setSetupDialogOpen}>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogHeader>
-              <DialogTitle>Database Setup Required</DialogTitle>
-              <DialogDescription>
-                You need to create the categories table in your Supabase
-                database. Follow these instructions:
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <ol className="list-decimal pl-5 space-y-2">
-                <li>
-                  Log in to your Supabase dashboard at{" "}
-                  <a
-                    href="https://app.supabase.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline"
-                  >
-                    https://app.supabase.com
-                  </a>
-                </li>
-                <li>Select your project</li>
-                <li>Go to the "Table Editor" section</li>
-                <li>Click "Create a new table"</li>
-                <li>Name the table "categories"</li>
-                <li>Add the following columns:</li>
-              </ol>
-
-              <div className="overflow-x-auto">
-                <table className="min-w-full border border-gray-200">
-                  <thead>
-                    <tr className="bg-gray-100">
-                      <th className="px-4 py-2 border">Column Name</th>
-                      <th className="px-4 py-2 border">Data Type</th>
-                      <th className="px-4 py-2 border">Default Value</th>
-                      <th className="px-4 py-2 border">Primary Key</th>
-                      <th className="px-4 py-2 border">Not Null</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="px-4 py-2 border">id</td>
-                      <td className="px-4 py-2 border">text</td>
-                      <td className="px-4 py-2 border"></td>
-                      <td className="px-4 py-2 border">Yes</td>
-                      <td className="px-4 py-2 border">Yes</td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-2 border">name</td>
-                      <td className="px-4 py-2 border">text</td>
-                      <td className="px-4 py-2 border"></td>
-                      <td className="px-4 py-2 border">No</td>
-                      <td className="px-4 py-2 border">Yes</td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-2 border">image</td>
-                      <td className="px-4 py-2 border">text</td>
-                      <td className="px-4 py-2 border"></td>
-                      <td className="px-4 py-2 border">No</td>
-                      <td className="px-4 py-2 border">No</td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-2 border">count</td>
-                      <td className="px-4 py-2 border">integer</td>
-                      <td className="px-4 py-2 border">0</td>
-                      <td className="px-4 py-2 border">No</td>
-                      <td className="px-4 py-2 border">No</td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-2 border">description</td>
-                      <td className="px-4 py-2 border">text</td>
-                      <td className="px-4 py-2 border"></td>
-                      <td className="px-4 py-2 border">No</td>
-                      <td className="px-4 py-2 border">No</td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-2 border">slug</td>
-                      <td className="px-4 py-2 border">text</td>
-                      <td className="px-4 py-2 border"></td>
-                      <td className="px-4 py-2 border">No</td>
-                      <td className="px-4 py-2 border">Yes</td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-2 border">parentId</td>
-                      <td className="px-4 py-2 border">text</td>
-                      <td className="px-4 py-2 border"></td>
-                      <td className="px-4 py-2 border">No</td>
-                      <td className="px-4 py-2 border">No</td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-2 border">isActive</td>
-                      <td className="px-4 py-2 border">boolean</td>
-                      <td className="px-4 py-2 border">true</td>
-                      <td className="px-4 py-2 border">No</td>
-                      <td className="px-4 py-2 border">No</td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-2 border">createdAt</td>
-                      <td className="px-4 py-2 border">timestamptz</td>
-                      <td className="px-4 py-2 border">now()</td>
-                      <td className="px-4 py-2 border">No</td>
-                      <td className="px-4 py-2 border">No</td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-2 border">updatedAt</td>
-                      <td className="px-4 py-2 border">timestamptz</td>
-                      <td className="px-4 py-2 border">now()</td>
-                      <td className="px-4 py-2 border">No</td>
-                      <td className="px-4 py-2 border">No</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="bg-yellow-50 p-4 rounded-md border border-yellow-200 mt-4">
-                <h3 className="text-sm font-medium text-yellow-800">
-                  Important: Configure Row Level Security
-                </h3>
-                <p className="text-sm text-yellow-700 mt-1">
-                  After creating the table, you need to configure Row Level
-                  Security (RLS) to allow access to the table:
-                </p>
-                <ol className="list-decimal pl-5 mt-2 text-sm text-yellow-700 space-y-1">
-                  <li>
-                    Log in to your Supabase dashboard at{" "}
-                    <a
-                      href="https://app.supabase.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 hover:underline"
-                    >
-                      https://app.supabase.com
-                    </a>
-                  </li>
-                  <li>Select your project</li>
-                  <li>Go to the "Authentication" section in the sidebar</li>
-                  <li>Click on "Policies"</li>
-                  <li>Find your "categories" table</li>
-                  <li>
-                    Either:
-                    <ul className="list-disc pl-5 mt-1 space-y-1">
-                      <li>
-                        <strong>Option 1:</strong> Turn off RLS by toggling the
-                        switch (less secure but simpler)
-                      </li>
-                      <li>
-                        <strong>Option 2:</strong> Create a policy that allows
-                        all operations (recommended):
-                        <ol className="list-decimal pl-5 mt-1 space-y-1">
-                          <li>Click "New Policy"</li>
-                          <li>Select "Create a policy from scratch"</li>
-                          <li>
-                            Policy name: "Enable all operations for categories"
-                          </li>
-                          <li>
-                            For "Using expression" enter:{" "}
-                            <code className="bg-gray-100 px-1 py-0.5 rounded">
-                              true
-                            </code>
-                          </li>
-                          <li>
-                            Check all operations: SELECT, INSERT, UPDATE, DELETE
-                          </li>
-                          <li>Click "Save Policy"</li>
-                        </ol>
-                      </li>
-                    </ul>
-                  </li>
-                </ol>
-              </div>
-
-              <div className="bg-blue-50 p-4 rounded-md border border-blue-200 mt-4">
-                <h3 className="text-sm font-medium text-blue-800">
-                  Set Up Storage for Image Uploads
-                </h3>
-                <p className="text-sm text-blue-700 mt-1">
-                  To enable image uploads, you also need to set up a storage
-                  bucket:
-                </p>
-                <ol className="list-decimal pl-5 mt-2 text-sm text-blue-700 space-y-1">
-                  <li>Go to the "Storage" section in the sidebar</li>
-                  <li>Click "Create a new bucket"</li>
-                  <li>Name the bucket "categories"</li>
-                  <li>Make sure "Public bucket" is checked</li>
-                  <li>Click "Create bucket"</li>
-                  <li>Go to "Policies" tab for the bucket</li>
-                  <li>
-                    Create a policy that allows public access:
-                    <ol className="list-decimal pl-5 mt-1 space-y-1">
-                      <li>Click "New Policy"</li>
-                      <li>Policy name: "Public access"</li>
-                      <li>
-                        For "Using expression" enter:{" "}
-                        <code className="bg-gray-100 px-1 py-0.5 rounded">
-                          true
-                        </code>
-                      </li>
-                      <li>
-                        Check all operations: SELECT, INSERT, UPDATE, DELETE
-                      </li>
-                      <li>Click "Save Policy"</li>
-                    </ol>
-                  </li>
-                </ol>
-              </div>
-
-              <p className="text-sm text-gray-500 mt-4">
-                After creating the table and configuring RLS, refresh this page
-                to continue.
-              </p>
-            </div>
-            <DialogFooter>
-              <Button onClick={() => refreshProducts()}>Refresh</Button>
-              <DialogClose asChild>
-                <Button type="button" variant="outline">
-                  Close
-                </Button>
-              </DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-    );
-  }
-
-  if (hasRlsError) {
-    return (
-      <div className="flex flex-col items-center justify-center h-96 space-y-4">
-        <ShieldAlert className="h-16 w-16 text-amber-500" />
-        <h2 className="text-2xl font-bold">Row Level Security Error</h2>
-        <p className="text-center max-w-md text-gray-500">
-          Row Level Security is preventing access to the categories table.
-          Please configure RLS policies in your Supabase dashboard.
-        </p>
-        <Button onClick={() => setRlsDialogOpen(true)}>
-          View RLS Instructions
-        </Button>
-
-        <Dialog open={rlsDialogOpen} onOpenChange={setRlsDialogOpen}>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogHeader>
-              <DialogTitle>
-                Row Level Security Configuration Required
-              </DialogTitle>
-              <DialogDescription>
-                You need to configure Row Level Security (RLS) for the
-                categories table in your Supabase database.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="bg-amber-50 p-4 rounded-md border border-amber-200">
-                <h3 className="text-sm font-medium text-amber-800">
-                  What is Row Level Security?
-                </h3>
-                <p className="text-sm text-amber-700 mt-1">
-                  Row Level Security (RLS) is a Supabase feature that restricts
-                  which rows can be accessed by different users. By default,
-                  when you create a table, RLS is enabled but no policies are
-                  defined, which blocks all access.
-                </p>
-              </div>
-
-              <h3 className="text-base font-medium">
-                Follow these steps to configure RLS:
-              </h3>
-              <ol className="list-decimal pl-5 space-y-2">
-                <li>
-                  Log in to your Supabase dashboard at{" "}
-                  <a
-                    href="https://app.supabase.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline"
-                  >
-                    https://app.supabase.com
-                  </a>
-                </li>
-                <li>Select your project</li>
-                <li>Go to the "Authentication" section in the sidebar</li>
-                <li>Click on "Policies"</li>
-                <li>Find your "categories" table</li>
-                <li>
-                  Either:
-                  <ul className="list-disc pl-5 mt-1 space-y-1">
-                    <li>
-                      <strong>Option 1:</strong> Turn off RLS by toggling the
-                      switch (less secure but simpler)
-                    </li>
-                    <li>
-                      <strong>Option 2:</strong> Create a policy that allows all
-                      operations (recommended):
-                      <ol className="list-decimal pl-5 mt-1 space-y-1">
-                        <li>Click "New Policy"</li>
-                        <li>Select "Create a policy from scratch"</li>
-                        <li>
-                          Policy name: "Enable all operations for categories"
-                        </li>
-                        <li>
-                          For "Using expression" enter:{" "}
-                          <code className="bg-gray-100 px-1 py-0.5 rounded">
-                            true
-                          </code>
-                        </li>
-                        <li>
-                          Check all operations: SELECT, INSERT, UPDATE, DELETE
-                        </li>
-                        <li>Click "Save Policy"</li>
-                      </ol>
-                    </li>
-                  </ul>
-                </li>
-              </ol>
-            </div>
-            <DialogFooter>
-              <Button onClick={checkRlsStatus}>Check RLS Status</Button>
-              <DialogClose asChild>
-                <Button type="button" variant="outline">
-                  Close
-                </Button>
-              </DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-    );
-  }
 
   return (
-    <Tabs defaultValue="profile" className="w-[400px]">
-      <TabsList>
-        <TabsTrigger value="profile">Profile</TabsTrigger>
-        <TabsTrigger value="orders">Orders</TabsTrigger>
-        <TabsTrigger value="wishlist">Wishlist</TabsTrigger>
-      </TabsList>
-      <TabsContent value="profile">
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold">Categories</h1>
+    <div className="space-y-8">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Category Showcase Management</h2>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
             <Button
-              onClick={handleAddCategory}
-              className="flex items-center gap-2"
+              onClick={() => {
+                resetForm();
+                setIsEditing(null);
+              }}
             >
-              <Plus className="h-4 w-4" />
-              Add Categoryegory
+              <Plus className="mr-2 h-4 w-4" /> Add New Showcase
             </Button>
-          </div>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>
+                {isEditing ? "Edit Showcase Item" : "Add New Showcase Item"}
+              </DialogTitle>
+            </DialogHeader>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Manage Categories</CardTitle>
-              <CardDescription>
-                Update your account information here
-              </CardDescription>
-            </CardHeader>
-            <form onSubmit={handleUpdateProfile}>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="firstName">First name</Label>
+            <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+              <Tabs defaultValue="english">
+                <TabsList className="mb-4">
+                  <TabsTrigger value="english">English</TabsTrigger>
+                  <TabsTrigger value="arabic">Arabic</TabsTrigger>
+                  <TabsTrigger value="settings">Settings</TabsTrigger>
+                  <TabsTrigger value="appearance">Appearance</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="english" className="space-y-4">
+                  <div>
+                    <Label htmlFor="name">Name (English)</Label>
                     <Input
-                      id="firstName"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
+                      id="name"
+                      name="name"
+                      value={formData.name || ""}
+                      onChange={handleInputChange}
+                      required
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="lastName">Last name</Label>
+
+                  <div>
+                    <Label htmlFor="href">URL Path</Label>
                     <Input
-                      id="lastName"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
+                      id="href"
+                      name="href"
+                      value={formData.href || ""}
+                      onChange={handleInputChange}
+                      required
                     />
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={user?.email || ""}
-                    disabled
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    Your email cannot be changed
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input
-                    id="phone"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="address">Address</Label>
-                  <Input
-                    id="address"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                  />
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="city">City</Label>
+
+                  <div>
+                    <Label htmlFor="image">Image URL</Label>
                     <Input
-                      id="city"
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
+                      id="image"
+                      name="image"
+                      value={formData.image || ""}
+                      onChange={handleInputChange}
+                      required
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="state">State</Label>
+                </TabsContent>
+
+                <TabsContent value="arabic" className="space-y-4">
+                  <div>
+                    <Label htmlFor="name_ar">Name (Arabic)</Label>
                     <Input
-                      id="state"
-                      value={stateValue}
-                      onChange={(e) => setStateValue(e.target.value)}
+                      id="name_ar"
+                      name="name_ar"
+                      value={formData.name_ar || ""}
+                      onChange={handleInputChange}
+                      dir="rtl"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="zipCode">ZIP Code</Label>
+                </TabsContent>
+
+                <TabsContent value="settings" className="space-y-4">
+                  <div>
+                    <Label htmlFor="category">Category</Label>
+                    <Select
+                      value={formData.category_id}
+                      onValueChange={(value) =>
+                        handleSelectChange("category_id", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="order">Display Order</Label>
                     <Input
-                      id="zipCode"
-                      value={zipCode}
-                      onChange={(e) => setZipCode(e.target.value)}
+                      id="order"
+                      name="order"
+                      type="number"
+                      value={formData.order || 1}
+                      onChange={handleInputChange}
+                      min={1}
                     />
                   </div>
-                </div>
-              </CardContent>
-              <CardFooter className="flex justify-end">
-                <Button type="submit" disabled={isUpdating}>
-                  {isUpdating ? <LoadingSpinner size="sm" /> : "Save changes"}
+
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="active"
+                      checked={formData.active}
+                      onCheckedChange={handleSwitchChange}
+                    />
+                    <Label htmlFor="active">Active</Label>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="appearance" className="space-y-4">
+                  <div>
+                    <Label htmlFor="icon">Icon</Label>
+                    <Select
+                      value={formData.icon}
+                      onValueChange={(value) =>
+                        handleSelectChange("icon", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select an icon">
+                          <div className="flex items-center space-x-2">
+                            {formData.icon && getIconComponent(formData.icon)}
+                            <span>{formData.icon}</span>
+                          </div>
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.entries(lucideIcons).map(([name, icon]) => (
+                          <SelectItem key={name} value={name}>
+                            <div className="flex items-center space-x-2">
+                              {icon}
+                              <span>{name}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="color">Color Gradient</Label>
+                    <Select
+                      value={formData.color}
+                      onValueChange={(value) =>
+                        handleSelectChange("color", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a color">
+                          <div className="flex items-center space-x-2">
+                            <div
+                              className={`w-6 h-6 rounded-full bg-gradient-to-r ${formData.color}`}
+                            ></div>
+                            <span>{formData.color}</span>
+                          </div>
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableColors.map((color) => (
+                          <SelectItem key={color} value={color}>
+                            <div className="flex items-center space-x-2">
+                              <div
+                                className={`w-6 h-6 rounded-full bg-gradient-to-r ${color}`}
+                              ></div>
+                              <span>{color}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </TabsContent>
+              </Tabs>
+
+              <div className="flex justify-end space-x-2 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    resetForm();
+                    setIsDialogOpen(false);
+                  }}
+                >
+                  Cancel
                 </Button>
-              </CardFooter>
-            </form>
-          </Card>
-        </div>
-      </TabsContent>
-
-      <TabsContent value="orders">
-        <Card>
-          <CardHeader>
-            <CardTitle>Order History</CardTitle>
-            <CardDescription>View and track your past orders</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {ordersLoading ? (
-              <div className="flex justify-center py-10">
-                <LoadingSpinner size="md" />
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <>
+                      <svg
+                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      {isEditing ? "Updating..." : "Saving..."}
+                    </>
+                  ) : (
+                    <>
+                      <Save className="mr-2 h-4 w-4" />
+                      {isEditing ? "Update" : "Save"}
+                    </>
+                  )}
+                </Button>
               </div>
-            ) : (
-              orders.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-10">
-                  <Package className="h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-xl font-medium mb-2">No orders yet</h3>
-                  <p className="text-muted-foreground mb-6 text-center max-w-md">
-                    You haven't placed any orders yet. Start shopping to see
-                    your orders here.
-                  </p>
-                  <Link href="/shop">
-                    <Button>Browse Products</Button>
-                  </Link>
-                </div>
-              )
-            )}
-          </CardContent>
-        </Card>
-      </TabsContent>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
 
-      <TabsContent value="wishlist">
-        <Card>
-          <CardHeader>
-            <CardTitle>Wishlist</CardTitle>
-            <CardDescription>Products you've saved for later</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-center py-10 text-muted-foreground">
-              Your wishlist is empty.
-            </p>
-          </CardContent>
-        </Card>
-      </TabsContent>
-    </Tabs>
+      {isLoading ? (
+        <div className="flex justify-center items-center h-40">
+          <div className="text-lg">Loading...</div>
+        </div>
+      ) : showcaseItems.length === 0 ? (
+        <div className="text-center p-8 border rounded-lg">
+          <p className="text-gray-500">
+            No showcase items found. Add your first one!
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {showcaseItems.map((item) => (
+            <div
+              key={item.id}
+              className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div className={`h-40 bg-gradient-to-r ${item.color} relative`}>
+                {item.image && (
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-cover mix-blend-overlay"
+                  />
+                )}
+                <div className="absolute top-2 right-2 flex space-x-1">
+                  <Button
+                    size="icon"
+                    variant="secondary"
+                    onClick={() => handleEdit(item)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="destructive"
+                    onClick={() => handleDelete(item.id)}
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </div>
+                {!item.active && (
+                  <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-xs">
+                    Inactive
+                  </div>
+                )}
+              </div>
+              <div className="p-4">
+                <div className="flex items-center space-x-2 mb-2">
+                  <div className="p-1 rounded-full bg-white shadow-sm">
+                    {getIconComponent(item.icon)}
+                  </div>
+                  <h3 className="font-medium text-lg">{item.name}</h3>
+                </div>
+                {item.name_ar && (
+                  <p
+                    className="text-sm text-gray-500 mb-2 text-right"
+                    dir="rtl"
+                  >
+                    {item.name_ar}
+                  </p>
+                )}
+                <div className="text-sm text-gray-500 mt-2">
+                  <p>Path: {item.href}</p>
+                  <p>Order: {item.order}</p>
+                  <p>
+                    Category:{" "}
+                    {categories.find((c) => c.id === item.category_id)?.name ||
+                      "Unknown"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

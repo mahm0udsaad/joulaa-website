@@ -33,7 +33,8 @@
       "newArrivals": "New Arrivals",
       "bestSellers": "Best Sellers",
       "endOfMonthSale": "End of Month Sale",
-      "promotions": "Special Promotions"
+      "promotions": "Special Promotions",
+      "dailyDeals": "Daily Deals"
     }
   },
   "account": {
@@ -212,5 +213,79 @@
     "emailPlaceholder": "Enter your email",
     "subscribeButton": "Subscribe",
     "allRightsReserved": "All Rights Reserved"
+  },
+  "shop": {
+    "shopAllProducts": "Shop All Products",
+    "filters": "Filters",
+    "search": "Search",
+    "categories": "Categories",
+    "priceRange": "Price Range",
+    "brands": "Brands",
+    "onSale": "On Sale",
+    "newArrivals": "New Arrivals",
+    "bestSellers": "Best Sellers",
+    "resetFilters": "Reset Filters",
+    "noProducts": "No products found",
+    "tryAdjusting": "Try adjusting your filters",
+    "showing": "Showing",
+    "products": "products",
+    "sortBy": "Sort by",
+    "featured": "Featured",
+    "newest": "Newest",
+    "priceLowToHigh": "Price: Low to High",
+    "priceHighToLow": "Price: High to Low",
+    "rating": "Rating",
+    "loadMore": "Load More"
+  },
+  "collections": {
+    "title": "Our Collections",
+    "description": "Explore our curated collections of premium beauty and makeup products, designed for every look, occasion, and skin type.",
+    "limitedEdition": "Limited Edition",
+    "holidayGlam": "Holiday Glam Collection",
+    "holidayDescription": "Discover our exclusive holiday collection featuring festive shades, shimmering highlights, and luxurious packaging perfect for gifting or treating yourself.",
+    "products": "products",
+    "limitedTime": "Limited time only",
+    "shopCollection": "Shop Collection",
+    "exploreCollection": "Explore collection",
+    "new": "New",
+    "items": "items",
+    "newsletter": {
+      "title": "Never miss a new collection",
+      "description": "Subscribe to our newsletter to be the first to know about new launches, exclusive offers, and limited edition collections.",
+      "emailPlaceholder": "Enter your email",
+      "subscribe": "Subscribe"
+    }
+  },
+  "search": {
+    "placeholder": "Search products...",
+    "loading": "Searching...",
+    "noResults": "No products found",
+    "suggestions": "Suggestions"
+  },
+  "share": {
+    "title": "Share Product",
+    "subtitle": "Share this product with your friends and followers",
+    "facebook": "Facebook",
+    "twitter": "Twitter",
+    "whatsapp": "WhatsApp",
+    "instagram": "Instagram",
+    "copyLink": "Copy Link",
+    "instagramCopy": "Ready for Instagram!",
+    "instagramCopyDesc": "Link copied to clipboard. Open Instagram and paste in your story.",
+    "linkCopied": "Link Copied!",
+    "linkCopiedDesc": "Product link has been copied to clipboard",
+    "error": "Error",
+    "errorDesc": "Could not copy link to clipboard",
+    "nativeShare": "Share with device",
+    "nativeShareSuccess": "Shared successfully",
+    "nativeShareSuccessDesc": "Content has been shared",
+    "nativeShareError": "Error sharing",
+    "nativeShareErrorDesc": "Could not share content",
+    "nativeShareNotSupported": "Not supported",
+    "nativeShareNotSupportedDesc": "Native sharing is not supported on this device",
+    "productPreview": {
+      "by": "by",
+      "shopNow": "Shop now"
+    }
   }
 }

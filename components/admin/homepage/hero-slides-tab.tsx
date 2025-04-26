@@ -1,17 +1,31 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { Edit, Plus, Trash2, Loader2, ImageIcon, LinkIcon, Languages } from "lucide-react"
-import { supabase } from "@/lib/supabase"
-import { toast } from "@/components/ui/use-toast"
-import Image from "next/image"
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Edit,
+  Plus,
+  Trash2,
+  Loader2,
+  ImageIcon,
+  LinkIcon,
+  Languages,
+} from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { toast } from "@/components/ui/use-toast";
+import Image from "next/image";
 import {
   Dialog,
   DialogContent,
@@ -19,55 +33,58 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import type { HeroSlide } from "@/lib/types"
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { HeroSlide } from "@/lib/types";
 
 export default function HeroSlidesTab() {
-  const [heroSlides, setHeroSlides] = useState<any[]>([])
-  const [isLoadingHeroSlides, setIsLoadingHeroSlides] = useState(false)
-  const [heroDialogOpen, setHeroDialogOpen] = useState(false)
-  const [currentHero, setCurrentHero] = useState<HeroSlide | null>(null)
+  const [heroSlides, setHeroSlides] = useState<any[]>([]);
+  const [isLoadingHeroSlides, setIsLoadingHeroSlides] = useState(false);
+  const [heroDialogOpen, setHeroDialogOpen] = useState(false);
+  const [currentHero, setCurrentHero] = useState<HeroSlide | null>(null);
 
   useEffect(() => {
-    fetchHeroSlides()
-  }, [])
+    fetchHeroSlides();
+  }, []);
 
   const fetchHeroSlides = async () => {
-    setIsLoadingHeroSlides(true)
+    setIsLoadingHeroSlides(true);
     try {
-      const { data, error } = await supabase.from("hero_slides").select("*").order("order", { ascending: true })
+      const { data, error } = await supabase
+        .from("hero_slides")
+        .select("*")
+        .order("order", { ascending: true });
 
-      if (error) throw error
-      setHeroSlides(data || [])
+      if (error) throw error;
+      setHeroSlides(data || []);
     } catch (error) {
-      console.error("Error fetching hero slides:", error)
+      console.error("Error fetching hero slides:", error);
       toast({
         title: "Error",
         description: "Failed to fetch hero slides. Please try again.",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsLoadingHeroSlides(false)
+      setIsLoadingHeroSlides(false);
     }
-  }
+  };
 
   // Edit hero slide
   const editHeroSlide = (slide: HeroSlide) => {
-    setCurrentHero(slide)
-    setHeroDialogOpen(true)
-  }
+    setCurrentHero(slide);
+    setHeroDialogOpen(true);
+  };
 
   // Add new hero slide
   const addNewHeroSlide = () => {
-    setCurrentHero(null)
-    setHeroDialogOpen(true)
-  }
+    setCurrentHero(null);
+    setHeroDialogOpen(true);
+  };
 
   // Save hero slide
   const saveHeroSlide = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget)
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
 
     const slideData = {
       title: formData.get("title") as string,
@@ -80,93 +97,113 @@ export default function HeroSlidesTab() {
       image_url: formData.get("image") as string,
       order: currentHero?.order || heroSlides.length + 1,
       active: formData.get("active") === "on",
-    }
+    };
 
     try {
       if (currentHero) {
         // Update existing slide
-        const { error } = await supabase.from("hero_slides").update(slideData).eq("id", currentHero.id)
+        const { error } = await supabase
+          .from("hero_slides")
+          .update(slideData)
+          .eq("id", currentHero.id);
 
-        if (error) throw error
+        if (error) throw error;
 
-        setHeroSlides(heroSlides.map((slide) => (slide.id === currentHero.id ? { ...slide, ...slideData } : slide)))
+        setHeroSlides(
+          heroSlides.map((slide) =>
+            slide.id === currentHero.id ? { ...slide, ...slideData } : slide,
+          ),
+        );
 
         toast({
           title: "Slide updated",
           description: "Hero slide has been updated successfully.",
-        })
+        });
       } else {
         // Create new slide
-        const { data, error } = await supabase.from("hero_slides").insert(slideData).select()
+        const { data, error } = await supabase
+          .from("hero_slides")
+          .insert(slideData)
+          .select();
 
-        if (error) throw error
+        if (error) throw error;
 
-        setHeroSlides([...heroSlides, data[0]])
+        setHeroSlides([...heroSlides, data[0]]);
 
         toast({
           title: "Slide added",
           description: "New hero slide has been added successfully.",
-        })
+        });
       }
 
-      setHeroDialogOpen(false)
+      setHeroDialogOpen(false);
     } catch (error) {
-      console.error("Error saving hero slide:", error)
+      console.error("Error saving hero slide:", error);
       toast({
         title: "Error",
         description: "Failed to save hero slide. Please try again.",
         variant: "destructive",
-      })
+      });
     }
-  }
+  };
 
   // Delete hero slide
   const deleteHeroSlide = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this hero slide?")) return
+    if (!confirm("Are you sure you want to delete this hero slide?")) return;
 
     try {
-      const { error } = await supabase.from("hero_slides").delete().eq("id", id)
+      const { error } = await supabase
+        .from("hero_slides")
+        .delete()
+        .eq("id", id);
 
-      if (error) throw error
+      if (error) throw error;
 
-      setHeroSlides(heroSlides.filter((slide) => slide.id !== id))
+      setHeroSlides(heroSlides.filter((slide) => slide.id !== id));
 
       toast({
         title: "Slide deleted",
         description: "Hero slide has been deleted successfully.",
-      })
+      });
     } catch (error) {
-      console.error("Error deleting hero slide:", error)
+      console.error("Error deleting hero slide:", error);
       toast({
         title: "Error",
         description: "Failed to delete hero slide. Please try again.",
         variant: "destructive",
-      })
+      });
     }
-  }
+  };
 
   // Toggle hero slide active state
   const toggleHeroSlideActive = async (id: string, active: boolean) => {
     try {
-      const { error } = await supabase.from("hero_slides").update({ active }).eq("id", id)
+      const { error } = await supabase
+        .from("hero_slides")
+        .update({ active })
+        .eq("id", id);
 
-      if (error) throw error
+      if (error) throw error;
 
-      setHeroSlides(heroSlides.map((slide) => (slide.id === id ? { ...slide, active } : slide)))
+      setHeroSlides(
+        heroSlides.map((slide) =>
+          slide.id === id ? { ...slide, active } : slide,
+        ),
+      );
 
       toast({
         title: active ? "Slide activated" : "Slide deactivated",
         description: `The hero slide has been ${active ? "activated" : "deactivated"} successfully.`,
-      })
+      });
     } catch (error) {
-      console.error("Error updating hero slide:", error)
+      console.error("Error updating hero slide:", error);
       toast({
         title: "Error",
         description: "Failed to update hero slide. Please try again.",
         variant: "destructive",
-      })
+      });
     }
-  }
+  };
 
   return (
     <>
@@ -174,7 +211,9 @@ export default function HeroSlidesTab() {
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle>Hero Slides Manager</CardTitle>
-            <CardDescription>Manage your hero slides here. You can add, edit, or remove slides.</CardDescription>
+            <CardDescription>
+              Manage your hero slides here. You can add, edit, or remove slides.
+            </CardDescription>
           </div>
           <Button onClick={addNewHeroSlide} className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
@@ -194,10 +233,16 @@ export default function HeroSlidesTab() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {heroSlides.map((slide) => (
-                <div key={slide.id} className="border rounded-lg overflow-hidden">
+                <div
+                  key={slide.id}
+                  className="border rounded-lg overflow-hidden"
+                >
                   <div className="relative h-48 w-full">
                     <Image
-                      src={slide.image_url || "/placeholder.svg?height=400&width=600"}
+                      src={
+                        slide.image_url ||
+                        "/placeholder.svg?height=400&width=600"
+                      }
                       alt={slide.title}
                       fill
                       className="object-cover"
@@ -207,7 +252,9 @@ export default function HeroSlidesTab() {
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <h3 className="font-bold text-lg">{slide.title}</h3>
-                        <p className="text-gray-600 text-sm">{slide.subtitle}</p>
+                        <p className="text-gray-600 text-sm">
+                          {slide.subtitle}
+                        </p>
                         {slide.title_ar && (
                           <div className="mt-1 text-xs text-gray-500 flex items-center">
                             <Languages className="h-3 w-3 mr-1" />
@@ -217,18 +264,28 @@ export default function HeroSlidesTab() {
                       </div>
                       <div className="flex items-center">
                         {slide.active && (
-                          <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-2">Active</span>
+                          <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-2">
+                            Active
+                          </span>
                         )}
                       </div>
                     </div>
                     <div className="flex items-center gap-2 text-sm mb-4">
-                      <span className="bg-primary/10 text-primary px-2 py-1 rounded">{slide.button_text}</span>
+                      <span className="bg-primary/10 text-primary px-2 py-1 rounded">
+                        {slide.button_text}
+                      </span>
                       <span className="text-gray-500">→</span>
-                      <span className="text-gray-500 truncate">{slide.button_link}</span>
+                      <span className="text-gray-500 truncate">
+                        {slide.button_link}
+                      </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm" onClick={() => editHeroSlide(slide)}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => editHeroSlide(slide)}
+                        >
                           <Edit className="h-4 w-4 mr-1" />
                           Edit
                         </Button>
@@ -246,9 +303,13 @@ export default function HeroSlidesTab() {
                         <Switch
                           id={`active-${slide.id}`}
                           checked={slide.active}
-                          onCheckedChange={(checked) => toggleHeroSlideActive(slide.id, checked)}
+                          onCheckedChange={(checked) =>
+                            toggleHeroSlideActive(slide.id, checked)
+                          }
                         />
-                        <Label htmlFor={`active-${slide.id}`}>{slide.active ? "Active" : "Inactive"}</Label>
+                        <Label htmlFor={`active-${slide.id}`}>
+                          {slide.active ? "Active" : "Inactive"}
+                        </Label>
                       </div>
                     </div>
                   </div>
@@ -263,9 +324,13 @@ export default function HeroSlidesTab() {
       <Dialog open={heroDialogOpen} onOpenChange={setHeroDialogOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>{currentHero ? "Edit Hero Slide" : "Add Hero Slide"}</DialogTitle>
+            <DialogTitle>
+              {currentHero ? "Edit Hero Slide" : "Add Hero Slide"}
+            </DialogTitle>
             <DialogDescription>
-              {currentHero ? "Update the details of this hero slide." : "Create a new hero slide for your homepage."}
+              {currentHero
+                ? "Update the details of this hero slide."
+                : "Create a new hero slide for your homepage."}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={saveHeroSlide}>
@@ -394,7 +459,11 @@ export default function HeroSlidesTab() {
                     Active
                   </Label>
                   <div className="flex items-center gap-2">
-                    <Switch id="active" name="active" defaultChecked={currentHero?.active ?? true} />
+                    <Switch
+                      id="active"
+                      name="active"
+                      defaultChecked={currentHero?.active ?? true}
+                    />
                     <Label htmlFor="active">Show this slide</Label>
                   </div>
                 </div>
@@ -402,7 +471,11 @@ export default function HeroSlidesTab() {
             </Tabs>
 
             <DialogFooter className="mt-6">
-              <Button type="button" variant="outline" onClick={() => setHeroDialogOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setHeroDialogOpen(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit">Save</Button>
@@ -411,5 +484,5 @@ export default function HeroSlidesTab() {
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }

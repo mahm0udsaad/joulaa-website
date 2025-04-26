@@ -66,5 +66,26 @@
     "total": "Total",
     "delivery": "Estimated delivery: 3-5 business days",
     "quantity": "Qty"
+  },
+  "orderConfirmation": {
+    "title": "Thank You for Your Order!",
+    "description": "Your payment has been processed successfully. We'll send you an email confirmation with your order details and tracking information once your order ships.",
+    "continueShopping": "Continue Shopping",
+    "viewOrderHistory": "View Order History",
+    "paymentSuccess": "Payment successful",
+    "orderDetails": "Order Details",
+    "trackingInfo": "Tracking Information",
+    "emailConfirmation": "Email Confirmation",
+    "orderNumber": "Order Number",
+    "orderDate": "Order Date",
+    "orderStatus": "Order Status",
+    "paymentMethod": "Payment Method",
+    "shippingAddress": "Shipping Address",
+    "billingAddress": "Billing Address",
+    "items": "Items",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "tax": "Tax",
+    "total": "Total"
   }
 }

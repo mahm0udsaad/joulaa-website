@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import { useTranslation } from "@/app/i18n/client";
 import ProductReviewModal from "./product-review-modal";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/auth-context";
+import ShareModal from "./share-modal";
 
 export default function ProductDetailsClient({
   product,
@@ -38,8 +39,16 @@ export default function ProductDetailsClient({
   const [reviews, setReviews] = useState<Array<any>>(
     Array.isArray(product.reviews) ? product.reviews : [],
   );
+  const [shareModalOpen, setShareModalOpen] = useState(false);
 
   const inWishlist = isInWishlist(product.id);
+
+  // Calculate average rating
+  const averageRating = useMemo(() => {
+    if (!Array.isArray(reviews) || reviews.length === 0) return 0;
+    const sum = reviews.reduce((acc, review) => acc + (review.stars || 0), 0);
+    return sum / reviews.length;
+  }, [reviews]);
 
   const handleQuantityChange = (value: number) => {
     if (value >= 1) {
@@ -148,7 +157,7 @@ export default function ProductDetailsClient({
               </div>
             )}
           </div>
-          <div className="flex space-x-2 overflow-x-auto pb-2">
+          <div className="flex gap-2 overflow-x-auto pb-2">
             {product.image_urls?.map((image, index) => (
               <button
                 key={index}
@@ -182,12 +191,13 @@ export default function ProductDetailsClient({
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`h-5 w-5 ${i < Math.round(product.rating || 0) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
+                  className={`h-5 w-5 ${i < Math.round(averageRating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
                 />
               ))}
             </div>
             <span className="text-sm text-muted-foreground">
-              {product.rating} ({product.reviews} {t("product.reviews")})
+              {averageRating.toFixed(1)} ({reviews.length}{" "}
+              {t("product.reviews")})
             </span>
           </div>
 
@@ -204,7 +214,7 @@ export default function ProductDetailsClient({
 
           <p className="text-gray-700">{product.description}</p>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-4">
             <div className="flex items-center border rounded-md">
               <button
                 className="px-3 py-2 text-gray-600 hover:text-gray-800"
@@ -245,7 +255,12 @@ export default function ProductDetailsClient({
                   : t("product.addToWishlist")}
               </span>
             </Button>
-            <Button variant="outline" size="icon" className="rounded-full">
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full"
+              onClick={() => setShareModalOpen(true)}
+            >
               <Share2 className="h-5 w-5" />
               <span className="sr-only">{t("product.share")}</span>
             </Button>
@@ -387,6 +402,13 @@ export default function ProductDetailsClient({
           </div>
         </div>
       )}
+
+      <ShareModal
+        open={shareModalOpen}
+        onOpenChange={setShareModalOpen}
+        product={product}
+        t={t}
+      />
     </main>
   );
 }

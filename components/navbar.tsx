@@ -27,6 +27,7 @@ import {
 import { useTranslation } from "@/app/i18n/client";
 import { setStoredLanguage, switchLanguage } from "@/lib/language";
 import MobileMenu from "@/components/mobile-menu";
+import SearchComponent from "./search";
 
 export default function Navbar({ lng }: { lng: string }) {
   const { t } = useTranslation(lng, "common");
@@ -118,12 +119,7 @@ export default function Navbar({ lng }: { lng: string }) {
         <div className="flex flex-1 items-center justify-end">
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-2">
-            <Link href="/search">
-              <Button variant="ghost" size="icon">
-                <Search className="h-5 w-5" />
-                <span className="sr-only">{t("navbar.search")}</span>
-              </Button>
-            </Link>
+            <SearchComponent t={t} />
             <Link href="/wishlist">
               <Button variant="ghost" size="icon" className="relative">
                 <Heart className="h-5 w-5" />

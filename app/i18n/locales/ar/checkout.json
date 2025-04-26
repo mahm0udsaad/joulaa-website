@@ -66,5 +66,26 @@
     "total": "المجموع",
     "delivery": "الوقت المتوقع للتوصيل: 3-5 أيام عمل",
     "quantity": "الكمية"
+  },
+  "orderConfirmation": {
+    "title": "شكراً لطلبك!",
+    "description": "تمت معالجة الدفع بنجاح. سنرسل لك تأكيداً بالبريد الإلكتروني مع تفاصيل طلبك ومعلومات التتبع بمجرد شحن طلبك.",
+    "continueShopping": "مواصلة التسوق",
+    "viewOrderHistory": "عرض سجل الطلبات",
+    "paymentSuccess": "تم الدفع بنجاح",
+    "orderDetails": "تفاصيل الطلب",
+    "trackingInfo": "معلومات التتبع",
+    "emailConfirmation": "تأكيد البريد الإلكتروني",
+    "orderNumber": "رقم الطلب",
+    "orderDate": "تاريخ الطلب",
+    "orderStatus": "حالة الطلب",
+    "paymentMethod": "طريقة الدفع",
+    "shippingAddress": "عنوان الشحن",
+    "billingAddress": "عنوان الفواتير",
+    "items": "العناصر",
+    "subtotal": "المجموع الفرعي",
+    "shipping": "الشحن",
+    "tax": "الضريبة",
+    "total": "المجموع"
   }
 }

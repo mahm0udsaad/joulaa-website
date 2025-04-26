@@ -33,7 +33,8 @@
       "newArrivals": "وصل حديثاً",
       "bestSellers": "الأكثر مبيعاً",
       "endOfMonthSale": "تخفيضات نهاية الشهر",
-      "promotions": "العروض الخاصة"
+      "promotions": "العروض الخاصة",
+      "dailyDeals": "العروض اليومية"
     }
   },
   "account": {
@@ -212,5 +213,79 @@
     "emailPlaceholder": "أدخل بريدك الإلكتروني",
     "subscribeButton": "اشترك",
     "allRightsReserved": "جميع الحقوق محفوظة"
+  },
+  "shop": {
+    "shopAllProducts": "تصفح جميع المنتجات",
+    "filters": "التصفية",
+    "search": "بحث",
+    "categories": "الفئات",
+    "priceRange": "نطاق السعر",
+    "brands": "العلامات التجارية",
+    "onSale": "خصم",
+    "newArrivals": "وصل حديثاً",
+    "bestSellers": "الأكثر مبيعاً",
+    "resetFilters": "إعادة تعيين التصفية",
+    "noProducts": "لم يتم العثور على منتجات",
+    "tryAdjusting": "حاول تعديل التصفية",
+    "showing": "عرض",
+    "products": "منتجات",
+    "sortBy": "ترتيب حسب",
+    "featured": "مميز",
+    "newest": "الأحدث",
+    "priceLowToHigh": "السعر: من الأقل إلى الأعلى",
+    "priceHighToLow": "السعر: من الأعلى إلى الأقل",
+    "rating": "التقييم",
+    "loadMore": "تحميل المزيد"
+  },
+  "collections": {
+    "title": "مجموعاتنا",
+    "description": "اكتشف مجموعاتنا المختارة من منتجات التجميل والجمال الفاخرة، مصممة لكل مظهر ومناسبة ونوع بشرة.",
+    "limitedEdition": "إصدار محدود",
+    "holidayGlam": "مجموعة العطلات البراقة",
+    "holidayDescription": "اكتشف مجموعتنا الحصرية للعطلات التي تتميز بألوان احتفالية، ومستحضرات متلألئة، وتغليف فاخر مثالي للهدايا أو لتدليل نفسك.",
+    "products": "منتجات",
+    "limitedTime": "لفترة محدودة فقط",
+    "shopCollection": "تسوق المجموعة",
+    "exploreCollection": "استكشف المجموعة",
+    "new": "جديد",
+    "items": "عناصر",
+    "newsletter": {
+      "title": "لا تفوت أي مجموعة جديدة",
+      "description": "اشترك في نشرتنا الإخبارية لتكون أول من يعرف عن الإطلاقات الجديدة والعروض الحصرية ومجموعات الإصدار المحدود.",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني",
+      "subscribe": "اشترك"
+    }
+  },
+  "search": {
+    "placeholder": "ابحث عن منتجات...",
+    "loading": "جاري البحث...",
+    "noResults": "لم يتم العثور على منتجات",
+    "suggestions": "الاقتراحات"
+  },
+  "share": {
+    "title": "مشاركة المنتج",
+    "subtitle": "شارك هذا المنتج مع أصدقائك ومتابعيك",
+    "facebook": "فيسبوك",
+    "twitter": "تويتر",
+    "whatsapp": "واتساب",
+    "instagram": "إنستغرام",
+    "copyLink": "نسخ الرابط",
+    "instagramCopy": "جاهز للإنستغرام!",
+    "instagramCopyDesc": "تم نسخ الرابط. افتح الإنستغرام والصقه في قصتك.",
+    "linkCopied": "تم نسخ الرابط!",
+    "linkCopiedDesc": "تم نسخ رابط المنتج إلى الحافظة",
+    "error": "خطأ",
+    "errorDesc": "تعذر نسخ الرابط إلى الحافظة",
+    "nativeShare": "مشاركة باستخدام الجهاز",
+    "nativeShareSuccess": "تمت المشاركة بنجاح",
+    "nativeShareSuccessDesc": "تمت مشاركة المحتوى",
+    "nativeShareError": "خطأ في المشاركة",
+    "nativeShareErrorDesc": "تعذر مشاركة المحتوى",
+    "nativeShareNotSupported": "غير مدعوم",
+    "nativeShareNotSupportedDesc": "المشاركة الأصلية غير مدعومة على هذا الجهاز",
+    "productPreview": {
+      "by": "بواسطة",
+      "shopNow": "تسوق الآن"
+    }
   }
 }
