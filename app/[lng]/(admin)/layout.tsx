@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import AdminSidebar from "@/components/admin/admin-sidebar";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { SignOutButton } from "@/components/sign-out-button"
+import { SignOutButton } from "@/components/sign-out-button";
 
 export default async function AdminLayout({
   children,
@@ -42,12 +42,6 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <h1 className="text-xl font-bold">Admin Dashboard</h1>
-          <SignOutButton lng={lng} />
-        </div>
-      </header>
       <div className="flex min-h-screen">
         <AdminSidebar lng={lng} />
         <main className="flex-1 p-8 bg-gray-50">{children}</main>

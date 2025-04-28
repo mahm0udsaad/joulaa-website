@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import Image from "next/image"
-import { usePathname } from "next/navigation"
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -17,25 +17,25 @@ import {
   ShoppingCart,
   Building2,
   Percent,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { useState } from "react"
-import { useTranslation } from "@/app/i18n/client"
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useState } from "react";
+import { useTranslation } from "@/app/i18n/client";
 
 interface SidebarProps {
-  className?: string
-  lng: string
+  className?: string;
+  lng: string;
 }
 
 export default function AdminSidebar({ className, lng }: SidebarProps) {
-  const { t } = useTranslation(lng, 'admin')
-  const pathname = usePathname()
-  const [open, setOpen] = useState(false)
+  const { t } = useTranslation(lng, "admin");
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
 
   const isActive = (path: string) => {
-    return pathname === path || pathname?.startsWith(path + "/")
-  }
+    return pathname === path || pathname?.startsWith(path + "/");
+  };
 
   const routes = [
     {
@@ -104,7 +104,7 @@ export default function AdminSidebar({ className, lng }: SidebarProps) {
       href: "/admin/settings",
       active: isActive("/admin/settings"),
     },
-  ]
+  ];
 
   return (
     <>
@@ -119,9 +119,20 @@ export default function AdminSidebar({ className, lng }: SidebarProps) {
           <div className="px-3 py-2">
             <div className="mb-2 flex items-center px-2">
               <Link href="/" className="flex items-center">
-                <Image src="/joulaa-logo.svg" alt="Joulaa" width={120} height={40} className="h-8 w-auto" />
+                <Image
+                  src="/assets/joulaa-logo.svg"
+                  alt="Joulaa"
+                  width={120}
+                  height={40}
+                  className="h-8 w-auto"
+                />
               </Link>
-              <Button variant="ghost" size="icon" className="ml-auto" onClick={() => setOpen(false)}>
+              <Button
+                variant="default"
+                size="icon"
+                className="ml-auto"
+                onClick={() => setOpen(false)}
+              >
                 <X className="h-5 w-5" />
                 <span className="sr-only">Close</span>
               </Button>
@@ -138,7 +149,9 @@ export default function AdminSidebar({ className, lng }: SidebarProps) {
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   }`}
                 >
-                  <route.icon className={`mr-2 h-5 w-5 ${route.active ? "text-primary-foreground" : ""}`} />
+                  <route.icon
+                    className={`mr-2 h-5 w-5 ${route.active ? "text-primary-foreground" : ""}`}
+                  />
                   {route.label}
                 </Link>
               ))}
@@ -154,10 +167,18 @@ export default function AdminSidebar({ className, lng }: SidebarProps) {
           </div>
         </SheetContent>
       </Sheet>
-      <div className={`hidden h-screen border-r bg-background md:flex md:w-[240px] md:flex-col ${className}`}>
+      <div
+        className={`hidden h-screen border-r bg-background md:flex md:w-[240px] md:flex-col ${className}`}
+      >
         <div className="flex h-14 items-center border-b px-4">
           <Link href="/" className="flex items-center">
-            <Image src="/joulaa-logo.svg" alt="Joulaa" width={120} height={40} className="h-8 w-auto" />
+            <Image
+              src="/joulaa-logo.svg"
+              alt="Joulaa"
+              width={120}
+              height={40}
+              className="h-8 w-auto"
+            />
           </Link>
         </div>
         <div className="flex-1 overflow-auto py-2">
@@ -172,7 +193,9 @@ export default function AdminSidebar({ className, lng }: SidebarProps) {
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 }`}
               >
-                <route.icon className={`h-5 w-5 ${route.active ? "text-primary-foreground" : ""}`} />
+                <route.icon
+                  className={`h-5 w-5 ${route.active ? "text-primary-foreground" : ""}`}
+                />
                 {route.label}
               </Link>
             ))}
@@ -188,5 +211,5 @@ export default function AdminSidebar({ className, lng }: SidebarProps) {
         </div>
       </div>
     </>
-  )
+  );
 }

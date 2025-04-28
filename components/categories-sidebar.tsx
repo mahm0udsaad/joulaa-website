@@ -3,22 +3,8 @@ import { ChevronRight } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useTranslation } from "@/app/i18n";
 
-interface Category {
-  id: number;
-  name: string;
-  name_ar: string;
-  slug: string;
-  description?: string;
-  image_url?: string;
-  featured?: boolean;
-  order?: number;
-}
-
 export default async function CategoriesSidebar({ lng }: { lng: string }) {
-  const { data: categories } = await supabase
-    .from("categories")
-    .select("*")
-    .order("name", { ascending: true });
+  const { data: categories } = await supabase.from("categories").select("*");
 
   const { t } = await useTranslation(lng, "common");
   const isArabic = lng === "ar";

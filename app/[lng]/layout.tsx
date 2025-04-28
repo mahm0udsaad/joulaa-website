@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Inter, Playfair_Display } from "next/font/google";
-import "./globals.css";
+import "../../styles/globals.css";
 import { dir } from "i18next";
 import { languages } from "../i18n/settings";
-import ClientProviders from "@/components/providers";
-import Navbar from "@/components/navbar";
 import { Toaster } from "@/components/toaster";
-import Footer from "@/components/footer";
+import ClientProviders from "@/components/providers";
 
 const inter = Inter({ subsets: ["latin"] });
 const playfair = Playfair_Display({
@@ -77,10 +75,8 @@ export default async function RootLayout({
     <html lang={lng} dir={dir(lng)}>
       <body className={`${inter.className} ${playfair.variable}`}>
         <ClientProviders>
-          <Navbar lng={lng} />
           {children}
           <Toaster />
-          <Footer lng={lng} />
         </ClientProviders>
       </body>
     </html>
