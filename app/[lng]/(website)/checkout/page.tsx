@@ -1,22 +1,22 @@
 import { Suspense } from "react"
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
-import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
-import { CheckoutClient } from "./checkout-client"
+import CheckoutClient  from "./checkout-client"
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from 'next/headers'
+
 interface CheckoutPageProps {
   params: Promise<{ lng: string }>;
 }
 
 export default async function CheckoutPage({ params: paramsPromise }: CheckoutPageProps) {
   const { lng } = await paramsPromise;
-  const cookieStore = cookies()
-  const supabase = createServerComponentClient({ cookies: () => cookieStore })
   
   // Get the current user
-  const { data: { user } } = await supabase.auth.getUser()
-  
+  const supabase = createServerComponentClient({ cookies })
+  const { data: { session } } = await supabase.auth.getSession()
+  const user = session?.user
   if (!user) {
-    redirect('/login')
+    redirect('/auth/sign-in')
   }
 
   // Get user's shipping information
@@ -61,7 +61,7 @@ export default async function CheckoutPage({ params: paramsPromise }: CheckoutPa
   const productsMap = products?.reduce((map, product) => {
     map[product.id] = product
     return map
-  }, {}) || {}
+  }, {} as Record<string, any>) || {}
 
   const items = cartItems.map(item => {
     const product = productsMap[item.product_id]
@@ -75,7 +75,7 @@ export default async function CheckoutPage({ params: paramsPromise }: CheckoutPa
       image: product.image_urls && product.image_urls.length > 0 ? product.image_urls[0] : '/placeholder.svg',
       quantity: item.quantity
     }
-  }).filter(Boolean)
+  }).filter(Boolean) as CartItem[]
 
   // Calculate totals
   const subtotal = items.reduce((sum, item) => {
@@ -84,6 +84,15 @@ export default async function CheckoutPage({ params: paramsPromise }: CheckoutPa
   }, 0)
   const shipping = subtotal > 50 ? 0 : 5.99
   const total = subtotal + shipping
+
+  // Get active promo codes
+  const { data: promoCodes } = await supabase
+    .from('promo_codes')
+    .select('*')
+    .eq('is_active', true)
+    .gt('end_date', new Date().toISOString())
+    .lt('start_date', new Date().toISOString())
+    .order('created_at', { ascending: false })
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -102,9 +111,19 @@ export default async function CheckoutPage({ params: paramsPromise }: CheckoutPa
         } : null}
         subtotal={subtotal}
         shipping={shipping}
-                    total={total}
+        total={total}
+        promoCodes={promoCodes || []}
         lng={lng}
       />
     </Suspense>
   )
+}
+
+interface CartItem {
+  id: string
+  name: string
+  price: number
+  discount: number
+  image: string
+  quantity: number
 }

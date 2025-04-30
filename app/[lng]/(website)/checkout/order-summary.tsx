@@ -4,6 +4,7 @@ import Image from "next/image"
 import { Separator } from "@/components/ui/separator"
 import { getDiscountedPrice } from "@/lib/data"
 import { useTranslation } from "@/app/i18n/client"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 
 interface CartItem {
   id: number
@@ -19,66 +20,57 @@ interface OrderSummaryProps {
   subtotal: number
   shipping: number
   total: number
+  discount?: number
+  promoCode?: string | null
   lng: string
 }
 
-export function OrderSummary({
+export default function OrderSummary({
   items,
   subtotal,
   shipping,
   total,
+  discount = 0,
+  promoCode = null,
   lng
 }: OrderSummaryProps) {
   const { t } = useTranslation(lng, "checkout")
 
   return (
-    <div className="bg-white p-6 rounded-lg border sticky top-24">
-      <h2 className="text-xl font-semibold mb-4">{t("orderSummary.title")}</h2>
-
-      <div className="max-h-80 overflow-y-auto mb-4">
-        {items.map((item) => {
-          const discountedPrice = getDiscountedPrice(item.price, item.discount)
-
-          return (
-            <div
-              key={item.id}
-              className="flex py-3 border-b last:border-b-0"
-            >
-              <div className="relative h-16 w-16 flex-shrink-0 rounded overflow-hidden">
-                <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
-              </div>
-              <div className="mx-4 flex-1">
-                <h3 className="font-medium text-sm">{item.name}</h3>
-                <div className="flex justify-between mt-1">
-                  <span className="text-sm">{t("orderSummary.quantity")}: {item.quantity}</span>
-                  <span className="font-medium">
-                    {(Number.parseFloat(discountedPrice) * item.quantity).toFixed(2)} AED
-                  </span>
-                </div>
-              </div>
+    <Card className="hidden md:block">
+      <CardHeader>
+        <CardTitle>{t("orderSummary.title")}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          {items.map((item) => (
+            <div key={item.id} className="flex justify-between">
+              <span>{item.name} x {item.quantity}</span>
+              <span>${(item.price * item.quantity * (1 - item.discount / 100)).toFixed(2)}</span>
             </div>
-          )
-        })}
-      </div>
-
-      <Separator className="my-4" />
-
-      <div className="space-y-2">
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">{t("orderSummary.subtotal")}</span>
-          <span>{subtotal.toFixed(2)} AED</span>
+          ))}
+          <div className="border-t pt-4 space-y-2">
+            <div className="flex justify-between">
+              <span>{t("orderSummary.subtotal")}</span>
+              <span>${subtotal.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>{t("orderSummary.shipping")}</span>
+              <span>${shipping.toFixed(2)}</span>
+            </div>
+            {discount > 0 && (
+              <div className="flex justify-between text-green-600">
+                <span>{t("orderSummary.discount")} ({promoCode})</span>
+                <span>-${discount.toFixed(2)}</span>
+              </div>
+            )}
+            <div className="flex justify-between font-bold text-lg">
+              <span>{t("orderSummary.total")}</span>
+              <span>${total.toFixed(2)}</span>
+            </div>
+          </div>
         </div>
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">{t("orderSummary.shipping")}</span>
-          <span>{shipping === 0 ? t("orderSummary.free") : `${shipping.toFixed(2)} AED`}</span>
-        </div>
-        <Separator className="my-2" />
-        <div className="flex justify-between font-bold text-lg">
-          <span>{t("orderSummary.total")}</span>
-          <span>{total.toFixed(2)} AED</span>
-        </div>
-        <p className="text-xs text-muted-foreground">{t("orderSummary.delivery")}</p>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 } 

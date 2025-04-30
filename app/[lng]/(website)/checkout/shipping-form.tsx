@@ -32,27 +32,26 @@ interface ShippingFormProps {
   lng: string
 }
 
-export function ShippingForm({
+export default function ShippingForm({
   initialDetails,
   onDetailsChange,
-  editing,
+  editing: initialEditing,
   onEditingChange,
   lng
 }: ShippingFormProps) {
   const { t } = useTranslation(lng, "checkout")
-  const [shippingDetails, setShippingDetails] = useState<ShippingDetails>(
-    initialDetails || {
-      firstName: "",
-      lastName: "",
-      email: "",
-      address: "",
-      city: "",
-      postalCode: "",
-      state: "",
-      country: "",
-      phone: "",
-    }
-  )
+  const [editing, setEditing] = useState(initialEditing || !initialDetails?.address)
+  const [formData, setFormData] = useState<ShippingDetails>(initialDetails || {
+    firstName: "",
+    lastName: "",
+    email: "",
+    address: "",
+    city: "",
+    postalCode: "",
+    state: "",
+    country: "",
+    phone: "",
+  })
   const [saveAddress, setSaveAddress] = useState(true)
   const { user } = useAuth()
   const { toast } = useToast()
@@ -62,10 +61,10 @@ export function ShippingForm({
     const fieldName = id.includes("-") ? id.replace(/-([a-z])/g, (g) => g[1].toUpperCase()) : id
 
     const newDetails = {
-      ...shippingDetails,
+      ...formData,
       [fieldName]: value,
     }
-    setShippingDetails(newDetails)
+    setFormData(newDetails)
     onDetailsChange(newDetails)
   }
 
@@ -76,14 +75,14 @@ export function ShippingForm({
       const { error } = await supabase
         .from('users')
         .update({
-          first_name: shippingDetails.firstName,
-          last_name: shippingDetails.lastName,
-          address: shippingDetails.address,
-          city: shippingDetails.city,
-          state: shippingDetails.state,
-          zip_code: shippingDetails.postalCode,
-          country: shippingDetails.country,
-          phone: shippingDetails.phone,
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          zip_code: formData.postalCode,
+          country: formData.country,
+          phone: formData.phone,
         })
         .eq('id', user.id)
 
@@ -122,24 +121,24 @@ export function ShippingForm({
               <div className="flex flex-col">
                 <span className="text-sm text-muted-foreground">{t("shipping.fields.firstName")}</span>
                 <span className="font-medium">
-                  {shippingDetails.firstName} {shippingDetails.lastName}
+                  {formData.firstName} {formData.lastName}
                 </span>
               </div>
               <div className="flex flex-col">
                 <span className="text-sm text-muted-foreground">{t("shipping.fields.email")}</span>
-                <span className="font-medium">{shippingDetails.email}</span>
+                <span className="font-medium">{formData.email}</span>
               </div>
               <div className="flex flex-col">
                 <span className="text-sm text-muted-foreground">{t("shipping.fields.phone")}</span>
-                <span className="font-medium">{shippingDetails.phone}</span>
+                <span className="font-medium">{formData.phone}</span>
               </div>
               <div className="flex flex-col">
                 <span className="text-sm text-muted-foreground">{t("shipping.fields.address")}</span>
-                <span className="font-medium">{shippingDetails.address}</span>
+                <span className="font-medium">{formData.address}</span>
                 <span className="font-medium">
-                  {shippingDetails.city}, {shippingDetails.state} {shippingDetails.postalCode}
+                  {formData.city}, {formData.state} {formData.postalCode}
                 </span>
-                <span className="font-medium">{shippingDetails.country}</span>
+                <span className="font-medium">{formData.country}</span>
               </div>
             </div>
           </CardContent>
@@ -152,7 +151,7 @@ export function ShippingForm({
               id="firstName"
               placeholder={t("shipping.placeholders.firstName")}
               required
-              value={shippingDetails.firstName}
+              value={formData.firstName}
               onChange={handleInputChange}
             />
           </div>
@@ -162,7 +161,7 @@ export function ShippingForm({
               id="lastName"
               placeholder={t("shipping.placeholders.lastName")}
               required
-              value={shippingDetails.lastName}
+              value={formData.lastName}
               onChange={handleInputChange}
             />
           </div>
@@ -173,7 +172,7 @@ export function ShippingForm({
               type="email"
               placeholder={t("shipping.placeholders.email")}
               required
-              value={shippingDetails.email}
+              value={formData.email}
               onChange={handleInputChange}
             />
           </div>
@@ -183,7 +182,7 @@ export function ShippingForm({
               id="address"
               placeholder={t("shipping.placeholders.address")}
               required
-              value={shippingDetails.address}
+              value={formData.address}
               onChange={handleInputChange}
             />
           </div>
@@ -193,7 +192,7 @@ export function ShippingForm({
               id="city"
               placeholder={t("shipping.placeholders.city")}
               required
-              value={shippingDetails.city}
+              value={formData.city}
               onChange={handleInputChange}
             />
           </div>
@@ -203,7 +202,7 @@ export function ShippingForm({
               id="postalCode"
               placeholder={t("shipping.placeholders.postalCode")}
               required
-              value={shippingDetails.postalCode}
+              value={formData.postalCode}
               onChange={handleInputChange}
             />
           </div>
@@ -213,7 +212,7 @@ export function ShippingForm({
               id="state"
               placeholder={t("shipping.placeholders.state")}
               required
-              value={shippingDetails.state}
+              value={formData.state}
               onChange={handleInputChange}
             />
           </div>
@@ -223,7 +222,7 @@ export function ShippingForm({
               id="country"
               placeholder={t("shipping.placeholders.country")}
               required
-              value={shippingDetails.country}
+              value={formData.country}
               onChange={handleInputChange}
             />
           </div>
@@ -233,7 +232,7 @@ export function ShippingForm({
               id="phone"
               placeholder={t("shipping.placeholders.phone")}
               required
-              value={shippingDetails.phone}
+              value={formData.phone}
               onChange={handleInputChange}
             />
           </div>

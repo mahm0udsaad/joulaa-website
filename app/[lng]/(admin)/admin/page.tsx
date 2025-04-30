@@ -1,7 +1,8 @@
-import { ShoppingBag, Users, DollarSign, ShoppingCart } from "lucide-react";
+import { ShoppingBag, Users, DollarSign, ShoppingCart, Tag } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { PromoCodeGenerator } from "@/components/admin/promo-code-generator";
+import  PromoCodes  from "@/components/admin/promo-codes";
 import { supabase } from "@/lib/supabase";
 import { calculateProfitSummary } from "@/lib/profit-calculator";
 import { useTranslation } from "@/app/i18n";
@@ -173,7 +174,6 @@ export default async function AdminDashboard({
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold mb-6">{t("dashboardTitle")}</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <Card>
@@ -288,7 +288,7 @@ export default async function AdminDashboard({
       </div>
 
       <div className="mt-8">
-        <PromoCodeGenerator />
+        <PromoCodes />
       </div>
     </div>
   );

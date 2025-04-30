@@ -20,12 +20,6 @@ export default function CartSheet({ lng }: { lng?: string }) {
     router.push("/checkout")
   }
 
-  // Helper function to ensure we have a valid number
-  const calculateItemTotal = (price: number, discount: number, quantity: number) => {
-    const discountedPrice = price * (1 - discount)
-    return (discountedPrice * quantity).toFixed(2)
-  }
-
   // Helper function to get a valid image URL
   const getImageUrl = (item: any) => {
     // Check for image_urls array first

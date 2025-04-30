@@ -127,15 +127,6 @@ export default function AdminSidebar({ className, lng }: SidebarProps) {
                   className="h-8 w-auto"
                 />
               </Link>
-              <Button
-                variant="default"
-                size="icon"
-                className="ml-auto"
-                onClick={() => setOpen(false)}
-              >
-                <X className="h-5 w-5" />
-                <span className="sr-only">Close</span>
-              </Button>
             </div>
             <div className="space-y-1 py-4">
               {routes.map((route) => (
@@ -170,14 +161,14 @@ export default function AdminSidebar({ className, lng }: SidebarProps) {
       <div
         className={`hidden h-screen border-r bg-background md:flex md:w-[240px] md:flex-col ${className}`}
       >
-        <div className="flex h-14 items-center border-b px-4">
+        <div className="flex w-full h-20 items-center border-b px-4">
           <Link href="/" className="flex items-center">
             <Image
               src="/assets/joulaa-logo.svg"
               alt="Joulaa"
               width={120}
               height={40}
-              className="h-8 w-auto"
+              className="h-28 w-auto"
             />
           </Link>
         </div>

@@ -59,13 +59,15 @@
     "shippingRequired": "يرجى إكمال جميع حقول معلومات الشحن قبل المتابعة إلى الدفع."
   },
   "orderSummary": {
-    "title": "ملخص الطلب",
-    "subtotal": "المجموع الفرعي",
-    "shipping": "الشحن",
-    "free": "مجاني",
-    "total": "المجموع",
-    "delivery": "الوقت المتوقع للتوصيل: 3-5 أيام عمل",
-    "quantity": "الكمية"
+"title": "ملخص الطلب",
+      "subtotal": "المجموع الفرعي",
+      "shipping": "الشحن",
+      "total": "الإجمالي",
+      "discount": "الخصم ({{code}})",
+      "free": "مجاني",
+      "price": "{{price}} دولار",
+      "delivery": "وقت التسليم: 3-5 أيام عمل"
+    
   },
   "orderConfirmation": {
     "title": "شكراً لطلبك!",
