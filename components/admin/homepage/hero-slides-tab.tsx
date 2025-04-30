@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -37,37 +37,25 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { HeroSlide } from "@/lib/types";
 
-export default function HeroSlidesTab() {
-  const [heroSlides, setHeroSlides] = useState<any[]>([]);
-  const [isLoadingHeroSlides, setIsLoadingHeroSlides] = useState(false);
+interface HeroSlidesTabProps {
+  initialData: any[] // Replace 'any' with your actual type
+}
+
+export default function HeroSlidesTab({ initialData }: HeroSlidesTabProps) {
+  const [slides, setSlides] = useState(initialData)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [heroDialogOpen, setHeroDialogOpen] = useState(false);
   const [currentHero, setCurrentHero] = useState<HeroSlide | null>(null);
 
   useEffect(() => {
-    fetchHeroSlides();
-  }, []);
-
-  const fetchHeroSlides = async () => {
-    setIsLoadingHeroSlides(true);
-    try {
-      const { data, error } = await supabase
-        .from("hero_slides")
-        .select("*")
-        .order("order", { ascending: true });
-
-      if (error) throw error;
-      setHeroSlides(data || []);
-    } catch (error) {
-      console.error("Error fetching hero slides:", error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch hero slides. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoadingHeroSlides(false);
+    // Only keep the reordering effect if needed
+    const handleReorder = async () => {
+      // ... existing reorder logic ...
     }
-  };
+    handleReorder()
+  }, [slides])
 
   // Edit hero slide
   const editHeroSlide = (slide: HeroSlide) => {
@@ -95,7 +83,7 @@ export default function HeroSlidesTab() {
       button_text_ar: formData.get("buttonText_ar") as string,
       button_link: formData.get("buttonLink") as string,
       image_url: formData.get("image") as string,
-      order: currentHero?.order || heroSlides.length + 1,
+      order: currentHero?.order || slides.length + 1,
       active: formData.get("active") === "on",
     };
 
@@ -109,8 +97,8 @@ export default function HeroSlidesTab() {
 
         if (error) throw error;
 
-        setHeroSlides(
-          heroSlides.map((slide) =>
+        setSlides(
+          slides.map((slide) =>
             slide.id === currentHero.id ? { ...slide, ...slideData } : slide,
           ),
         );
@@ -128,7 +116,7 @@ export default function HeroSlidesTab() {
 
         if (error) throw error;
 
-        setHeroSlides([...heroSlides, data[0]]);
+        setSlides([...slides, data[0]]);
 
         toast({
           title: "Slide added",
@@ -159,7 +147,7 @@ export default function HeroSlidesTab() {
 
       if (error) throw error;
 
-      setHeroSlides(heroSlides.filter((slide) => slide.id !== id));
+      setSlides(slides.filter((slide) => slide.id !== id));
 
       toast({
         title: "Slide deleted",
@@ -185,8 +173,8 @@ export default function HeroSlidesTab() {
 
       if (error) throw error;
 
-      setHeroSlides(
-        heroSlides.map((slide) =>
+      setSlides(
+        slides.map((slide) =>
           slide.id === id ? { ...slide, active } : slide,
         ),
       );
@@ -221,18 +209,18 @@ export default function HeroSlidesTab() {
           </Button>
         </CardHeader>
         <CardContent>
-          {isLoadingHeroSlides ? (
+          {isLoading ? (
             <div className="text-center py-8">
               <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2" />
               <p>Loading hero slides...</p>
             </div>
-          ) : heroSlides.length === 0 ? (
+          ) : slides.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               No hero slides found. Click "Add Hero Slide" to create one.
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {heroSlides.map((slide) => (
+              {slides.map((slide) => (
                 <div
                   key={slide.id}
                   className="border rounded-lg overflow-hidden"

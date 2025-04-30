@@ -18,11 +18,13 @@ import { Trash2, Plus, Upload, Loader2, X } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import Image from "next/image"
+import { addProduct } from "@/app/actions/product-actions"
+import Link from "next/link"
 
 export default function ManageProductPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { products, getProductById, updateProduct, addProduct, uploadProductImage } = useProduct()
+  const { products, getProductById, updateProduct, uploadProductImage, refreshProducts } = useProduct()
   const { categories } = useCategory()
   const [isLoading, setIsLoading] = useState(true)
   const [isUploading, setIsUploading] = useState(false)
@@ -33,14 +35,13 @@ export default function ManageProductPage() {
     description: "",
     price: 0,
     cost: 0,
-    profitMargin: 0, // Changed back to profitMargin to match database schema
+    profitMargin: 0,
     discount: 0,
     category: "",
     stock_quantity: 0,
     image_urls: [""],
     colors: [] as { name: string; hex_value: string }[],
-    shades: [] as { name: string; hex_value: string }[],
-    variants: [] as { key: string; value: string }[], // Added variants for key-value pairs
+    variants: [] as { key: string; value: string }[],
     isFeatured: false,
     isNewArrival: false,
     isBestSeller: false,
@@ -48,9 +49,13 @@ export default function ManageProductPage() {
     newArrivalHeroSection: false,
   })
   const [newColor, setNewColor] = useState({ name: "", hex_value: "" })
-  const [newShade, setNewShade] = useState({ name: "", hex_value: "" })
-  const [newVariant, setNewVariant] = useState({ key: "", value: "" }) // Added for variants
+  const [newVariant, setNewVariant] = useState({ key: "", value: "" })
   const [activeTab, setActiveTab] = useState("basic")
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
+  const [successProductId, setSuccessProductId] = useState<number | null>(null)
+
+  const tabs = ["basic", "pricing", "images", "variants", "visibility"]
+  const lastTab = tabs[tabs.length - 1]
 
   // Get the ID from either params (path parameter) or searchParams (query parameter)
   const idFromQuery = searchParams.get("id")
@@ -76,7 +81,6 @@ export default function ManageProductPage() {
             stock_quantity: product.stock_quantity,
             image_urls: product.image_urls,
             colors: product.colors || [],
-            shades: product.shades || [],
             variants: product.variants || [],
             isFeatured: product.isFeatured || false,
             isNewArrival: product.isNewArrival || false,
@@ -172,14 +176,6 @@ export default function ManageProductPage() {
     })
   }
 
-  const handleShadeChange = (field: keyof typeof newShade, value: string) => {
-    setNewShade({
-      ...newShade,
-      [field]: value,
-    })
-  }
-
-  // Handle variant change
   const handleVariantChange = (field: keyof typeof newVariant, value: string) => {
     setNewVariant({
       ...newVariant,
@@ -204,24 +200,6 @@ export default function ManageProductPage() {
     })
   }
 
-  const addShade = () => {
-    if (newShade.name && newShade.hex_value) {
-      setFormData({
-        ...formData,
-        shades: [...formData.shades, { ...newShade }],
-      })
-      setNewShade({ name: "", hex_value: "" })
-    }
-  }
-
-  const removeShade = (index: number) => {
-    setFormData({
-      ...formData,
-      shades: formData.shades.filter((_, i) => i !== index),
-    })
-  }
-
-  // Add variant
   const addVariant = () => {
     if (newVariant.key && newVariant.value) {
       setFormData({
@@ -232,7 +210,6 @@ export default function ManageProductPage() {
     }
   }
 
-  // Remove variant
   const removeVariant = (index: number) => {
     setFormData({
       ...formData,
@@ -273,7 +250,7 @@ export default function ManageProductPage() {
       toast({
         title: "Success",
         description: "Image uploaded successfully",
-        variant: "success",
+        variant: "default",
       })
     } catch (error) {
       console.error("Error uploading image:", error)
@@ -311,10 +288,17 @@ export default function ManageProductPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    console.log("Form submitted with data:", formData)
 
     try {
       // Validate required fields
       if (!formData.name || !formData.brand || !formData.category || formData.image_urls[0] === "") {
+        console.log("Validation failed - missing required fields:", {
+          name: formData.name,
+          brand: formData.brand,
+          category: formData.category,
+          image_urls: formData.image_urls[0]
+        })
         toast({
           title: "Validation Error",
           description: "Please fill in all required fields",
@@ -326,8 +310,10 @@ export default function ManageProductPage() {
 
       // Filter out empty image URLs
       const filteredImages = formData.image_urls.filter((url) => url.trim() !== "")
+      console.log("Filtered images:", filteredImages)
 
       if (filteredImages.length === 0) {
+        console.log("Validation failed - no valid images")
         toast({
           title: "Validation Error",
           description: "At least one image URL is required",
@@ -341,31 +327,41 @@ export default function ManageProductPage() {
         ...formData,
         image_urls: filteredImages,
       }
+      console.log("Prepared product data:", productData)
 
       if (isEditMode && productId) {
+        console.log("Updating existing product:", productId)
         await updateProduct(productId, productData)
         toast({
           title: "Success",
           description: "Product updated successfully",
-          variant: "success",
+          variant: "default",
         })
       } else {
-        await addProduct(productData)
-        toast({
-          title: "Success",
-          description: "Product added successfully",
-          variant: "success",
-        })
+        console.log("Adding new product")
+        const result = await addProduct(productData)
+        
+        if (result.success) {
+          setSuccessProductId(result.data?.id)
+          setShowSuccessMessage(true)
+          await refreshProducts()
+          toast({
+            title: "Success",
+            description: "Product added successfully",
+            variant: "default",
+          })
+        } else {
+          throw new Error(result.error)
+        }
       }
-
-      router.push("/admin/products")
     } catch (error) {
       console.error("Error saving product:", error)
       toast({
         title: "Error",
-        description: "Failed to save product",
+        description: error instanceof Error ? error.message : "Failed to save product",
         variant: "destructive",
       })
+    } finally {
       setIsLoading(false)
     }
   }
@@ -380,6 +376,52 @@ export default function ManageProductPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {showSuccessMessage && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h2 className="text-2xl font-bold mb-4">Product Added Successfully!</h2>
+            <p className="text-gray-600 mb-6">What would you like to do next?</p>
+            <div className="flex flex-col gap-3">
+          
+            <Link
+  href="/admin/products" 
+  className="inline-flex items-center justify-center w-full rounded-md bg-primary text-primary-foreground text-sm font-medium h-10 px-4 py-2 transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none"
+>
+  Go to Products List
+</Link>
+              <Button 
+                onClick={() => {
+                  setShowSuccessMessage(false)
+                  setFormData({
+                    name: "",
+                    brand: "",
+                    description: "",
+                    price: 0,
+                    cost: 0,
+                    profitMargin: 0,
+                    discount: 0,
+                    category: "",
+                    stock_quantity: 0,
+                    image_urls: [""],
+                    colors: [],
+                    variants: [],
+                    isFeatured: false,
+                    isNewArrival: false,
+                    isBestSeller: false,
+                    isDailyOffer: false,
+                    newArrivalHeroSection: false,
+                  })
+                  setActiveTab("basic")
+                }}
+                variant="outline"
+                className="w-full"
+              >
+                Add Another Product
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">{isEditMode ? "Edit Product" : "Add New Product"}</h1>
         {!isEditMode && (
@@ -587,7 +629,7 @@ export default function ManageProductPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Product Variants</CardTitle>
-                <CardDescription>Add color, shade, and feature variants</CardDescription>
+                <CardDescription>Add color and feature variants</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Colors Section */}
@@ -635,56 +677,6 @@ export default function ManageProductPage() {
                       </div>
                       <Button type="button" onClick={addColor} disabled={!newColor.name || !newColor.hex_value}>
                         Add Color
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Shades Section */}
-                <div>
-                  <h3 className="text-lg font-medium mb-4">Shades</h3>
-                  <div className="space-y-4">
-                    {formData.shades.map((shade, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full border" style={{ backgroundColor: shade.hex_value }}></div>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium">{shade.name}</p>
-                          <p className="text-xs text-muted-foreground">{shade.hex_value}</p>
-                        </div>
-                        <Button type="button" variant="outline" size="icon" onClick={() => removeShade(index)}>
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 items-end">
-                      <div>
-                        <Label htmlFor="shadeName">Shade Name</Label>
-                        <Input
-                          id="shadeName"
-                          value={newShade.name}
-                          onChange={(e) => handleShadeChange("name", e.target.value)}
-                          placeholder="Light"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="shadeHex">Shade</Label>
-                        <div className="flex items-center gap-2">
-                          <Input
-                            id="shadeHex"
-                            value={newShade.hex_value}
-                            onChange={(e) => handleShadeChange("hex_value", e.target.value)}
-                            placeholder="#FFF5E1"
-                          />
-                          <input
-                            type="color"
-                            value={newShade.hex_value}
-                            onChange={(e) => handleShadeChange("hex_value", e.target.value)}
-                            className="w-10 h-10 rounded-md border cursor-pointer"
-                          />
-                        </div>
-                      </div>
-                      <Button type="button" onClick={addShade} disabled={!newShade.name || !newShade.hex_value}>
-                        Add Shade
                       </Button>
                     </div>
                   </div>
@@ -811,13 +803,27 @@ export default function ManageProductPage() {
           </TabsContent>
         </Tabs>
 
-        <div className="mt-6 flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={() => router.push("/admin/products")}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? <LoadingSpinner size="sm" /> : isEditMode ? "Update Product" : "Add Product"}
-          </Button>
+        <div className="mt-6 flex justify-between items-center">
+          <div className="flex gap-4">
+            <Button type="button" variant="outline" onClick={() => router.push("/admin/products")}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? <LoadingSpinner size="sm" /> : isEditMode ? "Update Product" : "Add Product"}
+            </Button>
+          </div>
+          <div>
+            <Button 
+              type="button" 
+              onClick={() => {
+                const currentIndex = tabs.indexOf(activeTab)
+                setActiveTab(tabs[currentIndex + 1])
+              }}
+              disabled={activeTab === "visibility"}
+            >
+              Next
+            </Button>
+          </div>
         </div>
       </form>
     </div>

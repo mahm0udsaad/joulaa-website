@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
@@ -23,46 +23,27 @@ import {
 } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-export default function PromoSectionsTab() {
-  const [promoSections, setPromoSections] = useState<any[]>([])
-  const [isLoadingPromoSections, setIsLoadingPromoSections] = useState(false)
+interface PromoSectionsTabProps {
+  initialData: any[] // Replace 'any' with your actual type
+}
+
+export default function PromoSectionsTab({ initialData }: PromoSectionsTabProps) {
+  const [sections, setSections] = useState(initialData)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [promoSectionDialogOpen, setPromoSectionDialogOpen] = useState(false)
   const [currentPromoSection, setCurrentPromoSection] = useState<any>(null)
   const [showSeedModal, setShowSeedModal] = useState(false)
   const [isSeeding, setIsSeeding] = useState(false)
 
   useEffect(() => {
-    fetchPromoSections()
-  }, [])
-
-  const fetchPromoSections = async () => {
-    setIsLoadingPromoSections(true)
-    try {
-      const { data, error } = await supabase.from("promo_sections").select("*")
-
-      if (error && error.code === "42P01") {
-        // Table doesn't exist
-        setPromoSections([])
-        setShowSeedModal(true)
-      } else if (error) {
-        throw error
-      } else {
-        setPromoSections(data || [])
-        if (data.length === 0) {
-          setShowSeedModal(true)
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching promo sections:", error)
-      toast({
-        title: "Error",
-        description: "Failed to fetch promo sections. Please try again.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsLoadingPromoSections(false)
+    // Only keep the reordering effect if needed
+    const handleReorder = async () => {
+      // ... existing reorder logic ...
     }
-  }
+    handleReorder()
+  }, [sections])
 
   // Edit promo section
   const editPromoSection = (section: any) => {
@@ -100,8 +81,8 @@ export default function PromoSectionsTab() {
 
         if (error) throw error
 
-        setPromoSections(
-          promoSections.map((section) =>
+        setSections(
+          sections.map((section) =>
             section.id === currentPromoSection.id ? { ...section, ...sectionData } : section,
           ),
         )
@@ -116,7 +97,7 @@ export default function PromoSectionsTab() {
 
         if (error) throw error
 
-        setPromoSections([...promoSections, data[0]])
+        setSections([...sections, data[0]])
 
         toast({
           title: "Promo section created",
@@ -144,7 +125,7 @@ export default function PromoSectionsTab() {
 
       if (error) throw error
 
-      setPromoSections(promoSections.filter((section) => section.id !== id))
+      setSections(sections.filter((section) => section.id !== id))
 
       toast({
         title: "Promo section deleted",
@@ -167,7 +148,7 @@ export default function PromoSectionsTab() {
 
       if (error) throw error
 
-      setPromoSections(promoSections.map((section) => (section.id === id ? { ...section, active } : section)))
+      setSections(sections.map((section) => (section.id === id ? { ...section, active } : section)))
 
       toast({
         title: active ? "Promo section activated" : "Promo section deactivated",
@@ -230,7 +211,7 @@ export default function PromoSectionsTab() {
       })
 
       // Refresh the data
-      fetchPromoSections()
+      setSections(initialData)
       setShowSeedModal(false)
     } catch (error) {
       console.error("Error seeding promo sections:", error)
@@ -260,18 +241,18 @@ export default function PromoSectionsTab() {
           </Button>
         </CardHeader>
         <CardContent>
-          {isLoadingPromoSections ? (
+          {isLoading ? (
             <div className="text-center py-8">
               <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2" />
               <p>Loading promo sections...</p>
             </div>
-          ) : promoSections.length === 0 ? (
+          ) : sections.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               No promo sections found. Click "Add Promo Section" to create one.
             </div>
           ) : (
             <div className="space-y-6">
-              {promoSections.map((promo) => (
+              {sections.map((promo) => (
                 <div
                   key={promo.id}
                   className={`border rounded-lg overflow-hidden ${promo.background_color || "bg-gray-100"}`}

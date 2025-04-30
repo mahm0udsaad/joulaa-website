@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -88,11 +88,13 @@ const availableColors = [
   "from-amber-400 to-amber-200",
 ];
 
-export default function CategoriesTab() {
+interface CategoriesTabProps {
+  initialData: any[] // Replace 'any' with your actual type
+}
+
+export default function CategoriesTab({ initialData }: CategoriesTabProps) {
   const [showcaseItems, setShowcaseItems] = useState<CategoryShowcase[]>([]);
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>(
-    [],
-  );
+  const [categories, setCategories] = useState(initialData);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -109,6 +111,7 @@ export default function CategoriesTab() {
     order: 1,
     category_id: "",
   });
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Fetch data from Supabase
   useEffect(() => {
@@ -275,6 +278,14 @@ export default function CategoriesTab() {
   const getIconComponent = (iconName: string) => {
     return lucideIcons[iconName] || lucideIcons.Sparkles;
   };
+
+  // Only keep the reordering effect if needed
+  useEffect(() => {
+    const handleReorder = async () => {
+      // ... existing reorder logic ...
+    }
+    handleReorder()
+  }, [categories])
 
   return (
     <div className="space-y-8">

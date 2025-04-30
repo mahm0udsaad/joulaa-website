@@ -28,7 +28,7 @@ export async function createOrder(
         discount_amount: discountAmount,
         payment_intent_id: paymentIntentId,
         payment_status: paymentStatus,
-        status: "processing",
+        status: "new",
         created_at: new Date().toISOString(),
       })
       .select()

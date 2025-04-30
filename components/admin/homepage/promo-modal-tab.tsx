@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -42,39 +42,16 @@ interface PromoModal {
   active: boolean;
 }
 
-export default function PromoModalTab() {
-  const [promoModals, setPromoModals] = useState<PromoModal[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [promoModalDialogOpen, setPromoModalDialogOpen] = useState(false);
-  const [currentPromoModal, setCurrentPromoModal] = useState<PromoModal | null>(
-    null,
-  );
+interface PromoModalTabProps {
+  initialData: any[] // Array of promo modals
+}
 
-  useEffect(() => {
-    fetchPromoModals();
-  }, []);
+export default function PromoModalTab({ initialData }: PromoModalTabProps) {
+  const [promoModals, setPromoModals] = useState(initialData)
+  const [isLoading, setIsLoading] = useState(false)
+  const [promoModalDialogOpen, setPromoModalDialogOpen] = useState(false)
+  const [currentPromoModal, setCurrentPromoModal] = useState<any | null>(null)
 
-  const fetchPromoModals = async () => {
-    setIsLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from("promo_modals")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setPromoModals(data || []);
-    } catch (error) {
-      console.error("Error fetching promo modals:", error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch promo modals. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   // Add new promo modal
   const addNewPromoModal = () => {
@@ -123,15 +100,15 @@ export default function PromoModalTab() {
         await supabase
           .from("promo_modals")
           .update({ active: false })
-          .not("id", "eq", id);
+          .not("id", "eq", id)
       }
 
       const { error } = await supabase
         .from("promo_modals")
         .update({ active })
-        .eq("id", id);
+        .eq("id", id)
 
-      if (error) throw error;
+      if (error) throw error
 
       setPromoModals(
         promoModals.map((modal) =>
@@ -139,28 +116,28 @@ export default function PromoModalTab() {
             ? { ...modal, active }
             : active
               ? { ...modal, active: false }
-              : modal,
-        ),
-      );
+              : modal
+        )
+      )
 
       toast({
         title: active ? "Promo modal activated" : "Promo modal deactivated",
         description: `The promo modal has been ${active ? "activated" : "deactivated"} successfully.`,
-      });
+      })
     } catch (error) {
-      console.error("Error updating promo modal:", error);
+      console.error("Error updating promo modal:", error)
       toast({
         title: "Error",
         description: "Failed to update promo modal. Please try again.",
         variant: "destructive",
-      });
+      })
     }
-  };
+  }
 
   // Save promo modal
   const savePromoModal = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
 
     const modalData = {
       title: formData.get("title") as string,
@@ -172,7 +149,7 @@ export default function PromoModalTab() {
       button_text_ar: formData.get("button_text_ar") as string,
       button_link: formData.get("button_link") as string,
       active: formData.get("active") === "on",
-    };
+    }
 
     try {
       if (currentPromoModal) {
@@ -180,16 +157,16 @@ export default function PromoModalTab() {
         const { error } = await supabase
           .from("promo_modals")
           .update(modalData)
-          .eq("id", currentPromoModal.id);
+          .eq("id", currentPromoModal.id)
 
-        if (error) throw error;
+        if (error) throw error
 
         // If this modal is being activated, deactivate all others
         if (modalData.active && !currentPromoModal.active) {
           await supabase
             .from("promo_modals")
             .update({ active: false })
-            .not("id", "eq", currentPromoModal.id);
+            .not("id", "eq", currentPromoModal.id)
         }
 
         setPromoModals(
@@ -198,51 +175,51 @@ export default function PromoModalTab() {
               ? { ...modal, ...modalData }
               : modalData.active
                 ? { ...modal, active: false }
-                : modal,
-          ),
-        );
+                : modal
+          )
+        )
 
         toast({
           title: "Promo modal updated",
           description: "The promo modal has been updated successfully.",
-        });
+        })
       } else {
         // Create new modal
         // If this modal is being activated, deactivate all others first
         if (modalData.active) {
-          await supabase.from("promo_modals").update({ active: false });
+          await supabase.from("promo_modals").update({ active: false })
         }
 
         const { data, error } = await supabase
           .from("promo_modals")
           .insert(modalData)
-          .select();
+          .select()
 
-        if (error) throw error;
+        if (error) throw error
 
         setPromoModals((prev) => [
           ...prev.map((modal) =>
-            modalData.active ? { ...modal, active: false } : modal,
+            modalData.active ? { ...modal, active: false } : modal
           ),
           data[0],
-        ]);
+        ])
 
         toast({
           title: "Promo modal created",
           description: "The promo modal has been created successfully.",
-        });
+        })
       }
 
-      setPromoModalDialogOpen(false);
+      setPromoModalDialogOpen(false)
     } catch (error) {
-      console.error("Error saving promo modal:", error);
+      console.error("Error saving promo modal:", error)
       toast({
         title: "Error",
         description: "Failed to save promo modal. Please try again.",
         variant: "destructive",
-      });
+      })
     }
-  };
+  }
 
   return (
     <>

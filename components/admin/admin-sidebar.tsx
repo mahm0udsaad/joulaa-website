@@ -173,7 +173,7 @@ export default function AdminSidebar({ className, lng }: SidebarProps) {
         <div className="flex h-14 items-center border-b px-4">
           <Link href="/" className="flex items-center">
             <Image
-              src="/joulaa-logo.svg"
+              src="/assets/joulaa-logo.svg"
               alt="Joulaa"
               width={120}
               height={40}

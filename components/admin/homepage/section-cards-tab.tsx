@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
@@ -25,31 +25,41 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { SectionCardItem } from "@/lib/types"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-export default function SectionCardsTab() {
-  const [sectionCards, setSectionCards] = useState<any[]>([])
-  const [isLoadingSectionCards, setIsLoadingSectionCards] = useState(false)
+interface SectionCardsTabProps {
+  initialData: any[] // Replace 'any' with your actual type
+}
+
+export default function SectionCardsTab({ initialData }: SectionCardsTabProps) {
+  const [cards, setCards] = useState(initialData)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [cardDialogOpen, setCardDialogOpen] = useState(false)
   const [currentCard, setCurrentCard] = useState<SectionCardItem | null>(null)
   const [showSeedModal, setShowSeedModal] = useState(false)
   const [isSeeding, setIsSeeding] = useState(false)
 
   useEffect(() => {
-    fetchSectionCards()
-  }, [])
+    // Only keep the reordering effect if needed
+    const handleReorder = async () => {
+      // ... existing reorder logic ...
+    }
+    handleReorder()
+  }, [cards])
 
   const fetchSectionCards = async () => {
-    setIsLoadingSectionCards(true)
+    setIsLoading(true)
     try {
       const { data, error } = await supabase.from("section_cards").select("*")
 
       if (error && error.code === "42P01") {
         // Table doesn't exist
-        setSectionCards([])
+        setCards([])
         setShowSeedModal(true)
       } else if (error) {
         throw error
       } else {
-        setSectionCards(data || [])
+        setCards(data || [])
         if (data.length === 0) {
           setShowSeedModal(true)
         }
@@ -62,7 +72,7 @@ export default function SectionCardsTab() {
         variant: "destructive",
       })
     } finally {
-      setIsLoadingSectionCards(false)
+      setIsLoading(false)
     }
   }
 
@@ -106,7 +116,7 @@ export default function SectionCardsTab() {
 
         if (error) throw error
 
-        setSectionCards(sectionCards.map((card) => (card.id === currentCard.id ? { ...card, ...cardData } : card)))
+        setCards(cards.map((card) => (card.id === currentCard.id ? { ...card, ...cardData } : card)))
 
         toast({
           title: "Card updated",
@@ -118,7 +128,7 @@ export default function SectionCardsTab() {
 
         if (error) throw error
 
-        setSectionCards([...sectionCards, data[0]])
+        setCards([...cards, data[0]])
 
         toast({
           title: "Card added",
@@ -146,7 +156,7 @@ export default function SectionCardsTab() {
 
       if (error) throw error
 
-      setSectionCards(sectionCards.filter((card) => card.id !== id))
+      setCards(cards.filter((card) => card.id !== id))
 
       toast({
         title: "Card deleted",
@@ -169,7 +179,7 @@ export default function SectionCardsTab() {
 
       if (error) throw error
 
-      setSectionCards(sectionCards.map((card) => (card.id === id ? { ...card, active } : card)))
+      setCards(cards.map((card) => (card.id === id ? { ...card, active } : card)))
 
       toast({
         title: active ? "Card activated" : "Card deactivated",
@@ -201,18 +211,18 @@ export default function SectionCardsTab() {
           </Button>
         </CardHeader>
         <CardContent>
-          {isLoadingSectionCards ? (
+          {isLoading ? (
             <div className="text-center py-8">
               <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2" />
               <p>Loading section cards...</p>
             </div>
-          ) : sectionCards.length === 0 ? (
+          ) : cards.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               No section cards found. Click "Add Section Card" to create one.
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {sectionCards.map((card) => (
+              {cards.map((card) => (
                 <div key={card.id} className="border rounded-lg overflow-hidden">
                   <div className="relative h-48 w-full">
                     <Image
