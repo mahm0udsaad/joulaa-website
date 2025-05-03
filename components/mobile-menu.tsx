@@ -20,6 +20,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
+  SheetClose,
 } from "@/components/ui/sheet";
 import { useWishlist } from "@/components/wishlist-provider";
 import { useTranslation } from "@/app/i18n/client";
@@ -78,7 +79,7 @@ export default function MobileMenu({ lng }: MobileMenuProps) {
         </Button>
       </SheetTrigger>
       <SheetContent
-        side="left"
+        side={lng === "en" ? "right" : "left"}
         className="w-[300px] sm:w-[400px] overflow-y-auto p-0"
       >
         <SheetHeader className="p-6 border-b bg-slate-50">
@@ -90,18 +91,19 @@ export default function MobileMenu({ lng }: MobileMenuProps) {
         <div className="px-4 py-6">
           <nav className="flex flex-col gap-2">
             {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`flex items-center gap-3 p-3 rounded-md transition-colors ${
-                  isActive(link.href)
-                    ? "bg-primary/10 text-primary font-medium"
-                    : "text-foreground/70 hover:bg-slate-100"
-                }`}
-              >
-                {link.icon}
-                <span>{link.text}</span>
-              </Link>
+              <SheetClose key={link.href} asChild>
+                <Link
+                  href={link.href}
+                  className={`flex items-center gap-3 p-3 rounded-md transition-colors ${
+                    isActive(link.href)
+                      ? "bg-primary/10 text-primary font-medium"
+                      : "text-foreground/70 hover:bg-slate-100"
+                  }`}
+                >
+                  {link.icon}
+                  <span>{link.text}</span>
+                </Link>
+              </SheetClose>
             ))}
           </nav>
 
@@ -111,30 +113,34 @@ export default function MobileMenu({ lng }: MobileMenuProps) {
             </p>
 
             <div className="space-y-2">
-              <Link href="/search">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start text-foreground/70 hover:bg-slate-100 rounded-md p-3 h-auto"
-                >
-                  <Search className="mr-3 h-5 w-5" />
-                  {t("navbar.search")}
-                </Button>
-              </Link>
+              <SheetClose asChild>
+                <Link href="/search">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-foreground/70 hover:bg-slate-100 rounded-md p-3 h-auto"
+                  >
+                    <Search className="mr-3 h-5 w-5" />
+                    {t("navbar.search")}
+                  </Button>
+                </Link>
+              </SheetClose>
 
-              <Link href="/wishlist">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start text-foreground/70 hover:bg-slate-100 rounded-md p-3 h-auto relative"
-                >
-                  <Heart className="mr-3 h-5 w-5" />
-                  {t("navbar.wishlist")}
-                  {wishlist?.length > 0 && (
-                    <span className="absolute right-4 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                      {wishlist?.length}
-                    </span>
-                  )}
-                </Button>
-              </Link>
+              <SheetClose asChild>
+                <Link href="/wishlist">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-foreground/70 hover:bg-slate-100 rounded-md p-3 h-auto relative"
+                  >
+                    <Heart className="mr-3 h-5 w-5" />
+                    {t("navbar.wishlist")}
+                    {wishlist?.length > 0 && (
+                      <span className="absolute right-4 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                        {wishlist?.length}
+                      </span>
+                    )}
+                  </Button>
+                </Link>
+              </SheetClose>
 
               <Button
                 variant="ghost"

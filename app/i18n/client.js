@@ -29,15 +29,17 @@ if (!i18nInstance.isInitialized) {
   i18nInstance.init({
     ...getOptions(),
     lng: undefined,
+    react: { useSuspense: true }, // <-- Important
     detection: {
-      order: ["path", "cookie", "htmlTag", "navigator"], // Changed order to prioritize path and cookie
-      caches: ['cookie'], // Cache detected language in cookie
+      order: ["path", "cookie", "htmlTag", "navigator"],
+      caches: ["cookie"],
       lookupCookie: cookieName,
-      cookieExpirationDate: new Date(Date.now() + 31536000 * 1000), // 1 year
+      cookieExpirationDate: new Date(Date.now() + 31536000 * 1000),
     },
     preload: runsOnServerSide ? languages : [],
-    debug: false, // Turn off debug mode
+    debug: false,
   });
+  
 }
 
 export function useTranslation(lng, ns, options) {

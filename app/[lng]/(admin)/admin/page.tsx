@@ -1,11 +1,11 @@
 import { ShoppingBag, Users, DollarSign, ShoppingCart, Tag } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { PromoCodeGenerator } from "@/components/admin/promo-code-generator";
 import  PromoCodes  from "@/components/admin/promo-codes";
 import { supabase } from "@/lib/supabase";
 import { calculateProfitSummary } from "@/lib/profit-calculator";
 import { useTranslation } from "@/app/i18n";
+import { Badge } from "@/components/ui/badge";
 
 async function getOrdersCount() {
   const { count, error } = await supabase
@@ -224,62 +224,90 @@ export default async function AdminDashboard({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
-          <CardHeader>
-            <CardTitle>{t("recentOrders")}</CardTitle>
+          <CardHeader className="border-b">
+            <CardTitle className="text-xl font-semibold flex items-center gap-2">
+              <ShoppingBag className="h-5 w-5 text-primary" />
+              {t("recentOrders")}
+            </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             {recentOrders.length > 0 ? (
-              <ul className="space-y-2">
+              <ul className="space-y-4">
                 {recentOrders.map((order) => (
                   <li
                     key={order.id}
-                    className="flex justify-between items-center"
+                    className="flex justify-between items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
                   >
-                    <span>
-                      #{order.id} - {order.customer}
-                    </span>
-                    <span>
-                      {order.total} ({order.status})
-                    </span>
+                    <div className="flex flex-col">
+                      <span className="font-medium text-gray-900">
+                        #{order.id.substring(0,8)}
+                      </span>
+                      <span className="text-sm text-gray-500">{order.customer}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="font-medium">${order.total}</span>
+                      <Badge className={`${
+                        order.status === "new" ? "bg-blue-500" :
+                        order.status === "processing" ? "bg-yellow-500" :
+                        order.status === "shipped" ? "bg-purple-500" :
+                        order.status === "delivered" ? "bg-green-500" :
+                        "bg-gray-500"
+                      }`}>
+                        {order.status}
+                      </Badge>
+                    </div>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-muted-foreground">{t("noOrdersYet")}</p>
+              <p className="text-muted-foreground text-center py-8">{t("noOrdersYet")}</p>
             )}
             <Link
               href="/admin/orders"
-              className="text-sm text-primary hover:underline mt-4 inline-block"
+              className="mt-6 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 transition-colors"
             >
               {t("viewAllOrders")}
             </Link>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader>
-            <CardTitle>{t("recentCustomers")}</CardTitle>
+          <CardHeader className="border-b">
+            <CardTitle className="text-xl font-semibold flex items-center gap-2">
+              <Users className="h-5 w-5 text-primary" />
+              {t("recentCustomers")}
+            </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             {recentCustomers.length > 0 ? (
-              <ul className="space-y-2">
+              <ul className="space-y-4">
                 {recentCustomers.map((customer) => (
                   <li
                     key={customer.id}
-                    className="flex justify-between items-center"
+                    className="flex justify-between items-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
                   >
-                    <span>{customer.name || customer.email}</span>
-                    <span>
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="text-primary font-medium">
+                          {(customer.name || customer.email).charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="flex flex-col">
+                      <span className="font-medium">{customer.name || customer.email}</span>
+                      <span className="font-light text-sm text-gray-500">{customer.email}</span>
+                      </div>
+                    </div>
+                    <Badge variant="outline" className="font-medium">
                       {customer.orders} {t("orders")}
-                    </span>
+                    </Badge>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-muted-foreground">{t("noCustomersYet")}</p>
+              <p className="text-muted-foreground text-center py-8">{t("noCustomersYet")}</p>
             )}
             <Link
               href="/admin/customers"
-              className="text-sm text-primary hover:underline mt-4 inline-block"
+              className="mt-6 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 transition-colors"
             >
               {t("viewAllCustomers")}
             </Link>

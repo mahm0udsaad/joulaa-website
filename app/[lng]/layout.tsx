@@ -14,6 +14,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://joulaa.com'),
   title: "Joulaa - Premium Makeup & Cosmetics | Luxury Beauty Products",
   description:
     "Discover premium makeup, skincare, and cosmetics products for your beauty routine. Luxury beauty brands, cruelty-free formulas, and expert beauty tips.",

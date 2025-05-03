@@ -39,9 +39,9 @@ async function updateProfile(formData: FormData) {
     throw new Error("Not authenticated")
   }
 
-  const { error } = await supabase
-    .from("users")
-    .update({
+      const { error } = await supabase
+        .from("users")
+        .update({
       first_name: formData.get("firstName"),
       last_name: formData.get("lastName"),
       phone: formData.get("phone"),
@@ -49,11 +49,11 @@ async function updateProfile(formData: FormData) {
       city: formData.get("city"),
       state: formData.get("state"),
       zip_code: formData.get("zipCode"),
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", user.id)
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", user.id)
 
-  if (error) throw error
+      if (error) throw error
 
   revalidatePath("/account")
 }

@@ -59,51 +59,56 @@ export default function Navbar({ lng }: { lng: string }) {
             />
           </Link>
           <nav className="flex items-center gap-6 text-sm font-medium">
-            <Link
-              href="/"
-              className={`transition-colors hover:text-foreground/80 ${
-                isActive("/") ? "text-foreground" : "text-foreground/60"
-              }`}
-            >
-              {t("navbar.home")}
-            </Link>
-            <Link
-              href="/shop"
-              className={`transition-colors hover:text-foreground/80 ${
-                isActive("/shop") ? "text-foreground" : "text-foreground/60"
-              }`}
-            >
-              {t("navbar.shop")}
-            </Link>
-            <Link
-              href="/new-arrivals"
-              className={`transition-colors hover:text-foreground/80 ${
-                isActive("/new-arrivals")
-                  ? "text-foreground"
-                  : "text-foreground/60"
-              }`}
-            >
-              {t("navbar.newArrivals")}
-            </Link>
-            <Link
-              href="/trending"
-              className={`transition-colors hover:text-foreground/80 ${
-                isActive("/trending") ? "text-foreground" : "text-foreground/60"
-              }`}
-            >
-              {t("navbar.trending")}
-            </Link>
-            <Link
-              href="/collections"
-              className={`transition-colors hover:text-foreground/80 ${
-                isActive("/collections")
-                  ? "text-foreground"
-                  : "text-foreground/60"
-              }`}
-            >
-              {t("navbar.collections")}
-            </Link>
-          </nav>
+              <Link
+                href="/"
+                className={`transition-colors hover:text-foreground/80 ${
+                  isActive("/") ? "text-foreground" : "text-foreground/60"
+                }`}
+                suppressHydrationWarning
+              >
+                <span suppressHydrationWarning>{t("navbar.home")}</span>
+              </Link>
+              <Link
+                href="/shop"
+                className={`transition-colors hover:text-foreground/80 ${
+                  isActive("/shop") ? "text-foreground" : "text-foreground/60"
+                }`}
+                suppressHydrationWarning
+              >
+                <span suppressHydrationWarning>{t("navbar.shop")}</span>
+              </Link>
+              <Link
+                href="/new-arrivals"
+                className={`transition-colors hover:text-foreground/80 ${
+                  isActive("/new-arrivals")
+                    ? "text-foreground"
+                    : "text-foreground/60"
+                }`}
+                suppressHydrationWarning
+              >
+                <span suppressHydrationWarning>{t("navbar.newArrivals")}</span>
+              </Link>
+              <Link
+                href="/trending"
+                className={`transition-colors hover:text-foreground/80 ${
+                  isActive("/trending") ? "text-foreground" : "text-foreground/60"
+                }`}
+                suppressHydrationWarning
+              >
+                <span suppressHydrationWarning>{t("navbar.trending")}</span>
+              </Link>
+              <Link
+                href="/collections"
+                className={`transition-colors hover:text-foreground/80 ${
+                  isActive("/collections")
+                    ? "text-foreground"
+                    : "text-foreground/60"
+                }`}
+                suppressHydrationWarning
+              >
+                <span suppressHydrationWarning>{t("navbar.collections")}</span>
+              </Link>
+            </nav>
         </div>
 
         <Link href="/" className="mr-6 flex items-center gap-2 md:hidden">
@@ -128,7 +133,7 @@ export default function Navbar({ lng }: { lng: string }) {
                     {wishlist?.length}
                   </span>
                 )}
-                <span className="sr-only">{t("navbar.wishlist")}</span>
+                <span className="sr-only" suppressHydrationWarning>{t("navbar.wishlist")}</span>
               </Button>
             </Link>
 

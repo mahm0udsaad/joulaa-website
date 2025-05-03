@@ -192,12 +192,29 @@ export default function OrdersPage() {
                       })}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <Badge className={`bg-${order.status === "new" ? "blue" : order.status === "processing" ? "yellow" : order.status === "shipped" ? "purple" : order.status === "delivered" ? "green" : order.status === "canceled" ? "red" : "gray"}-500`}>
+                    <Badge className={`${
+                        order.status === "new" ? "bg-blue-500" :
+                        order.status === "processing" ? "bg-yellow-500" :
+                        order.status === "shipped" ? "bg-purple-500" :
+                        order.status === "delivered" ? "bg-green-500" :
+                        order.status === "canceled" ? "bg-red-500" :
+                        "bg-gray-500"
+                      }`}>
                         {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                       </Badge>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <Badge variant="outline" className={`border-${order.payment_status === "pending" ? "yellow" : order.payment_status === "paid" ? "green" : order.payment_status === "refunded" ? "purple" : "red"}-500 text-${order.payment_status === "pending" ? "yellow" : order.payment_status === "paid" ? "green" : order.payment_status === "refunded" ? "purple" : "red"}-500`}>
+                      <Badge variant="outline" className={`
+                        ${order.payment_status === "pending" ? "border-yellow-500 text-yellow-500" : 
+                          order.payment_status === "paid" ? "border-green-500 text-green-500" :
+                          order.payment_status === "cash" ? "border-blue-500 text-blue-500" :
+                          order.payment_status === "refunded" ? "border-purple-500 text-purple-500" : 
+                          "border-red-500 text-red-500"}
+                        ${order.payment_status === "cash" ? "flex items-center gap-1" : ""}
+                      `}>
+                        {order.payment_status === "cash" && (
+                          <span className="w-2 h-2 rounded-full bg-blue-500"/>
+                        )}
                         {order.payment_status.charAt(0).toUpperCase() + order.payment_status.slice(1)}
                       </Badge>
                     </td>
